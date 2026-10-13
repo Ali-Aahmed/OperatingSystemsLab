@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مراجعة نظم التشغيل (OS) — المحاضرات 1 إلى 3</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+
+*{box-sizing:border-box}
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#eef2f9; --card:#ffffff; --ink:#101a33; --muted:#55607a; --line:#d8dfec;
+  --brand:#3347c9; --brand-ink:#ffffff; --brand-soft:#e4e8fb;
+  --accent:#f59e0b; --good:#12805c; --good-soft:#dcf5ea; --bad:#c9304b; --bad-soft:#fde6ea;
+  --warn-soft:#fff4d6; --warn-line:#f0d58a; --code-bg:#eef1f8;
+  --hero1:#0f1b3d; --hero2:#2a2f86; --tab:#3347c9;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1220; --card:#161d30; --ink:#e8ecf8; --muted:#9aa5c3; --line:#28324d;
+    --brand:#8b9bff; --brand-ink:#0b1030; --brand-soft:#1f2850;
+    --accent:#fbbf24; --good:#3dd6a0; --good-soft:#143428; --bad:#ff7a92; --bad-soft:#3b1b25;
+    --warn-soft:#3a3114; --warn-line:#6b5a1f; --code-bg:#1d2540; --tab:#8b9bff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1220; --card:#161d30; --ink:#e8ecf8; --muted:#9aa5c3; --line:#28324d;
+  --brand:#8b9bff; --brand-ink:#0b1030; --brand-soft:#1f2850;
+  --accent:#fbbf24; --good:#3dd6a0; --good-soft:#143428; --bad:#ff7a92; --bad-soft:#3b1b25;
+  --warn-soft:#3a3114; --warn-line:#6b5a1f; --code-bg:#1d2540; --tab:#8b9bff;
+  color-scheme:dark;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,system-ui,sans-serif;font-size:16px;line-height:1.9}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* content */
+section{padding:28px 0 4px}
+h2{font-size:25px;line-height:1.5;margin:0 0 6px;font-weight:700}
+h3{font-size:18px;margin:20px 0 4px;font-weight:700}
+p{margin:8px 0}
+ul,ol{padding-inline-start:22px;margin:8px 0}
+li{margin:4px 0}
+.muted{color:var(--muted)}
+.en{direction:ltr;unicode-bidi:isolate;display:inline-block}
+code{direction:ltr;unicode-bidi:isolate;font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--code-bg);padding:1px 6px;border-radius:6px;font-size:.9em}
+pre.code{direction:ltr;text-align:left;background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px;line-height:1.75;margin:10px 0;white-space:pre}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:12px 0}
+.callout{background:var(--warn-soft);border:1px solid var(--warn-line);border-radius:14px;padding:10px 14px;margin:12px 0}
+.def{background:var(--brand-soft);border-inline-start:6px solid var(--brand);border-radius:6px 14px 14px 6px;padding:10px 14px;font-size:19px;font-weight:700;margin:12px 0}
+.tw{overflow-x:auto;margin:12px 0}
+table.tbl{width:100%;border-collapse:collapse;font-size:15px;min-width:440px;background:var(--card)}
+.tbl th,.tbl td{border:1px solid var(--line);padding:7px 10px;text-align:right;vertical-align:top}
+.tbl th{background:var(--brand-soft)}
+.pill{display:inline-block;padding:0 10px;border-radius:99px;font-weight:700;font-size:14px}
+.k-stack{background:rgba(232,89,12,.2)}.k-heap{background:rgba(43,138,62,.22)}.k-data{background:rgba(25,113,194,.22)}.k-text{background:rgba(112,72,232,.2)}
+
+/* labs */
+.lab{border:2px solid var(--brand);border-radius:18px;padding:14px;margin:18px 0;background:var(--card)}
+.lab-title{display:inline-block;background:var(--brand);color:var(--brand-ink);border-radius:8px;padding:1px 12px;font-size:14px;font-weight:700;margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:0;border-radius:12px;padding:9px 14px;background:var(--brand);color:var(--brand-ink);cursor:pointer;min-height:44px}
+.btn.alt{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.hot{background:var(--accent);color:#1b1400}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.msg{background:var(--brand-soft);border-radius:12px;padding:10px 12px;margin-top:10px;min-height:52px;font-size:15px}
+.empty{color:var(--muted);padding:14px;text-align:center;border:1px dashed var(--line);border-radius:12px;width:100%}
+
+/* lab1 */
+.prog{display:flex;align-items:center;gap:10px;background:var(--code-bg);border-radius:12px;padding:10px 12px}
+.prog .ico{font-size:30px}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.pcard{border:2px solid var(--line);border-radius:12px;padding:8px 10px;font-size:14px;line-height:1.7;background:var(--card)}
+.pcard.run{border-color:var(--good);background:var(--good-soft)}
+.pcard .pt{font-weight:700}
+
+/* memory lab */
+.memgrid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:700px){.memgrid{grid-template-columns:270px 1fr}}
+.addr{font-size:12px;color:var(--muted);direction:ltr;text-align:left;margin:2px 0}
+.mem{height:470px;display:flex;flex-direction:column;border:2px solid var(--ink);border-radius:12px;overflow:hidden;direction:ltr;text-align:left}
+.reg{padding:6px 10px;cursor:pointer;border-bottom:2px solid var(--ink);border-inline-start:6px solid transparent}
+.reg:last-child{border-bottom:0}
+.reg.sel{box-shadow:inset 0 0 0 3px var(--accent)}
+.rl{font-weight:700;font-size:14px}
+.r-stack{background:rgba(232,89,12,.17);border-inline-start-color:#e8590c;flex:none}
+.r-heap{background:rgba(43,138,62,.18);border-inline-start-color:#2b8a3e;flex:none;display:flex;flex-direction:column}
+.r-data{background:rgba(25,113,194,.18);border-inline-start-color:#1971c2;flex:none;height:46px;display:flex;align-items:center;gap:8px}
+.r-text{background:rgba(112,72,232,.18);border-inline-start-color:#7048e8;flex:none;height:46px;display:flex;align-items:center;gap:8px}
+.gap{flex:1;min-height:18px;display:grid;place-items:center;font-size:12px;color:var(--muted);background:repeating-linear-gradient(45deg,transparent 0 8px,rgba(128,128,128,.14) 8px 16px);border-bottom:2px solid var(--ink)}
+.items{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.items.rev{flex-direction:column-reverse;margin-top:0;margin-bottom:4px}
+.fr{background:var(--card);border:1px solid var(--line);border-radius:7px;padding:0 8px;font-size:13px;height:24px;line-height:24px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.info{background:var(--code-bg);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:15px;min-height:96px}
+
+/* states lab */
+.svgbox{display:flex;justify-content:center}
+.svgbox svg{width:100%;max-width:520px;height:auto;direction:ltr}
+.node rect{fill:var(--card);stroke:var(--line);stroke-width:2}
+.node text{fill:var(--ink);font-size:14px;font-weight:700;text-anchor:middle;dominant-baseline:central;font-family:inherit}
+.node.on rect{fill:var(--brand);stroke:var(--brand)}
+.node.on text{fill:var(--brand-ink)}
+.edge{stroke:var(--muted);stroke-width:2;fill:none;opacity:.4}
+.edge.av{stroke:var(--accent);stroke-width:3.2;opacity:1}
+.el{font-size:11px;fill:var(--muted);font-family:inherit}
+.sdesc{background:var(--code-bg);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:15px}
+.trail{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;direction:ltr;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.trail span{background:var(--brand-soft);border-radius:6px;padding:0 8px}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .25s 2}
+
+/* pcb */
+.pcbt{border:2px solid var(--ink);border-radius:12px;overflow:hidden;direction:ltr}
+.pcbh{background:var(--ink);color:var(--bg);padding:6px 12px;font-weight:700;font-size:14px}
+.pcbr{display:flex;justify-content:space-between;gap:10px;width:100%;font:inherit;font-size:14.5px;text-align:left;background:var(--card);color:var(--ink);border:0;border-top:1px solid var(--line);padding:8px 12px;cursor:pointer;min-height:42px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.pcbr.sel{background:var(--brand-soft);box-shadow:inset 4px 0 0 var(--accent)}
+.pcbr b{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif}
+
+/* context switch */
+.csg{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:640px){.csg{grid-template-columns:1fr 1fr 1fr}}
+.cbox{border:2px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14px;background:var(--card);direction:ltr;text-align:left;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.8}
+.cbox h4{margin:0 0 4px;font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;font-size:15px}
+.cbox.hl{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.35)}
+.cbox.cpu{background:var(--brand-soft)}
+.ovh{background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:6px 10px;margin-top:10px;font-weight:700;font-size:14px}
+.dots{display:flex;gap:6px;margin:8px 0}
+.dots i{flex:1;height:6px;border-radius:4px;background:var(--line)}
+.dots i.d{background:var(--brand)}
+
+/* rr */
+.chip{display:inline-block;background:var(--brand-soft);border:1px solid var(--brand);border-radius:8px;padding:0 10px;margin:2px;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;direction:ltr}
+.gantt{display:flex;direction:ltr;overflow-x:auto;gap:2px;padding:4px 0}
+.gs{flex:none;border-radius:8px;padding:4px 6px;text-align:center;line-height:1.3;color:#fff;font-size:13px;min-height:46px}
+.gs b{display:block}.gs small{opacity:.9}
+.gs.c1{background:#3347c9}.gs.c2{background:#12805c}.gs.c3{background:#b4531a}
+.sel-q{font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
+
+/* fork tree */
+.tree{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.tn{font:inherit;font-size:14.5px;text-align:start;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;width:fit-content;max-width:100%;min-height:42px}
+.tn.sel{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.3)}
+.tn.zom{opacity:.7;border-style:dashed}
+.tn small{color:var(--muted)}
+
+/* ipc */
+.tabs{display:flex;gap:8px;margin:8px 0}
+.tabs .btn.on{background:var(--brand);color:var(--brand-ink)}
+
+/* producer-consumer */
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;direction:ltr}
+.slot{border:2px dashed var(--line);border-radius:10px;min-height:58px;display:grid;place-items:center;text-align:center;font-size:12.5px;line-height:1.35;color:var(--muted);padding:2px}
+.slot.full{border-style:solid;border-color:var(--brand);background:var(--brand-soft);color:var(--ink)}
+.slot.full b{font-size:14px}
+.slot.hd{box-shadow:0 0 0 3px var(--accent)}
+.slot.flash{animation:flash .5s 2}
+@keyframes flash{50%{background:var(--bad-soft);border-color:var(--bad)}}
+.pc-arrow{text-align:center;margin:6px 0;color:var(--muted);font-weight:700;font-size:14px}
+.printer{display:flex;gap:12px;align-items:center;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--code-bg)}
+.printer.busy{border-color:var(--good)}
+.printer .pi{font-size:36px}
+.printer>div{flex:1}
+.swt{display:flex;align-items:center;gap:8px;font-size:15px;min-height:44px;cursor:pointer}
+.swt input{width:20px;height:20px}
+.prodb{display:flex;flex-direction:column;align-items:center;line-height:1.4;font-size:14.5px}
+.prodb small{font-weight:600;opacity:.85}
+/* glossary */
+.gl{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.gl div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14.5px;line-height:1.7}
+.gl b{direction:ltr;unicode-bidi:isolate;display:inline-block}
+
+/* questions */
+.scorebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 54px);z-index:20;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 14px;margin:10px 0}
+.scorebar .top{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:14.5px;flex-wrap:wrap}
+.bar{height:8px;border-radius:5px;background:var(--line);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.q{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:14px 0}
+.qh,.qt,.opts{direction:ltr;text-align:left}
+.qn{display:inline-block;background:var(--brand);color:var(--brand-ink);border-radius:8px;padding:0 10px;font-weight:700;font-size:14px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.qt{font-weight:600;font-size:17px;line-height:1.6;margin:8px 0}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;font:inherit;font-size:16px;text-align:left;background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:12px;padding:9px 12px;margin:6px 0;cursor:pointer;min-height:46px;direction:ltr;line-height:1.6}
+.opt .ol{flex:none;width:26px;height:26px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;font-weight:700;font-size:13px}
+.opt:disabled{color:var(--ink);cursor:default}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.exp{direction:rtl;text-align:right;border-radius:12px;padding:8px 14px;margin-top:10px;font-size:15.5px}
+.exp.ok{background:var(--good-soft);border:1px solid var(--good)}
+.exp.no{background:var(--bad-soft);border:1px solid var(--bad)}
+.exp p{margin:4px 0}
+.final{background:var(--brand-soft);border-radius:14px;padding:12px 16px;margin:14px 0;font-weight:600}
+
+/* essays */
+.eq{direction:ltr;text-align:left;font-weight:600;font-size:17px;line-height:1.6}
+.essay textarea{width:100%;min-height:96px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:10px;margin:8px 0;resize:vertical}
+.model{direction:rtl;text-align:right;background:var(--good-soft);border:1px solid var(--good);border-radius:12px;padding:8px 14px;margin-top:10px}
+.model .kw{background:var(--card);border-radius:10px;padding:6px 10px;margin-top:8px;font-size:14.5px}
+.model pre{direction:ltr;text-align:left;background:var(--code-bg);border-radius:10px;padding:10px;overflow-x:auto;font-size:13px;line-height:1.6}
+footer{padding:30px 0 40px;text-align:center;color:var(--muted);font-size:14px}
+/* ===== palette override (teal) ===== */
+:root{--bg:#eef3f4;--card:#ffffff;--ink:#0f1f22;--muted:#58706f;--line:#d5e1e1;--brand:#0f766e;--brand-ink:#ffffff;--brand-soft:#dcf1ee;--accent:#e5a823;--code-bg:#edf3f3;--tab:#0f766e;--warn-soft:#fff4d6;--warn-line:#f0d58a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0a1314;--card:#122022;--ink:#e6f2f1;--muted:#97b0ae;--line:#24393a;--brand:#5eead4;--brand-ink:#04312d;--brand-soft:#143b38;--code-bg:#172a2c;--tab:#5eead4;--accent:#fbbf24}}
+:root[data-theme="dark"]{--bg:#0a1314;--card:#122022;--ink:#e6f2f1;--muted:#97b0ae;--line:#24393a;--brand:#5eead4;--brand-ink:#04312d;--brand-soft:#143b38;--code-bg:#172a2c;--tab:#5eead4;--accent:#fbbf24}
+
+/* ===== hero ===== */
+.hero{position:relative;overflow:hidden;color:#fff;padding:18px 0 64px;background:radial-gradient(900px 420px at 88% -10%,#14867e 0%,transparent 60%),radial-gradient(800px 460px at 0% 115%,#0c5a66 0%,transparent 55%),linear-gradient(135deg,#041f24 0%,#08403f 55%,#0b5a52 100%)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:30px 30px;-webkit-mask-image:linear-gradient(180deg,#000 30%,transparent 100%);mask-image:linear-gradient(180deg,#000 30%,transparent 100%)}
+.hero .wrap{position:relative;z-index:1;max-width:1000px}
+.hero-in{display:flex;align-items:center;gap:24px}
+.hero-txt{flex:1;min-width:0}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:3px 14px;font-size:13.5px;font-weight:600;direction:ltr}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:#5eead4;animation:ping 2s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(94,234,212,.7)}80%,100%{box-shadow:0 0 0 9px rgba(94,234,212,0)}}
+.hero h1{font-size:clamp(23px,4vw,33px);line-height:1.4;margin:8px 0 2px;font-weight:700}
+.grad{background:linear-gradient(90deg,#7ff5de,#fcd46a);-webkit-background-clip:text;background-clip:text;color:transparent;direction:ltr;unicode-bidi:isolate;display:inline-block}
+.hero .lead{font-size:14.5px;line-height:1.7;opacity:.92;margin:2px 0;max-width:560px}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:2px 12px;min-width:90px}
+.stat b{display:block;font-size:20px;line-height:1.3}
+.stat span{font-size:12.5px;opacity:.9}
+.orbit{flex:none;width:190px;height:190px;direction:ltr}
+.orbit text{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif}
+.orb{transform-origin:150px 150px;animation:spin 16s linear infinite}
+.orb.o2{animation-duration:11s;animation-direction:reverse}
+.orb.o3{animation-duration:7s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.core{transform-origin:150px 150px;animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{50%{transform:scale(1.07)}}
+.fchip{position:absolute;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;border:1px dashed rgba(255,255,255,.3);border-radius:8px;padding:1px 10px;color:rgba(255,255,255,.6);animation:float 7s ease-in-out infinite;direction:ltr}
+@keyframes float{50%{transform:translateY(-10px)}}
+.wave{position:absolute;left:0;bottom:-1px;width:100%;height:40px;display:block}
+@media(max-width:760px){.hero-in{flex-direction:column-reverse;gap:10px}.orbit{width:130px;height:130px}.fchip{display:none}.hero{padding-bottom:58px}}
+@media (prefers-reduced-motion:reduce){.orb,.core,.fchip,.eyebrow i{animation:none}}
+
+/* ===== lecture tabs + sub nav ===== */
+.lec-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:-40px;position:relative;z-index:3}
+.lt{font:inherit;text-align:center;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:12px 8px;cursor:pointer;box-shadow:0 6px 18px rgba(4,31,36,.14);transition:transform .15s}
+.lt:hover{transform:translateY(-2px)}
+.lt b{display:block;font-size:17px;line-height:1.5}
+.lt small{display:block;color:var(--muted);font-size:12.5px;direction:ltr;line-height:1.45;margin-top:2px}
+.lt.act{background:var(--brand-soft);border-color:var(--brand);box-shadow:0 8px 22px rgba(15,118,110,.3)}
+@media(max-width:560px){.lec-tabs{gap:6px}.lt{padding:9px 4px}.lt b{font-size:14.5px}.lt small{font-size:11px}}
+nav#sub{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:1px solid var(--line);margin-top:16px}
+nav#sub .navin{display:flex;gap:2px}
+nav#sub button{flex:1 1 0;min-width:0;font:inherit;font-size:15px;font-weight:600;line-height:1.4;padding:11px 4px;background:transparent;border:0;border-bottom:3px solid transparent;color:var(--muted);cursor:pointer}
+nav#sub button.act{color:var(--ink);border-bottom-color:var(--tab)}
+.nextrow{margin:26px 0 10px;justify-content:center}
+.nextrow .btn{padding:12px 22px}
+.tabs{flex-wrap:wrap}
+.btn.right{background:var(--good-soft);border-color:var(--good);color:var(--ink)}
+.btn.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--ink)}
+
+/* figures + lightbox */
+figure.fig{margin:14px 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center}
+figure.fig img{max-width:100%;height:auto;border-radius:8px;cursor:zoom-in;display:block;margin:0 auto}
+figure.fig.sm img{max-width:440px}
+figure.fig figcaption{font-size:13.5px;color:#475b5a;margin-top:6px;line-height:1.6}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;z-index:100;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:100%;background:#fff;border-radius:10px}
+
+/* quiz extras */
+.hard{display:inline-block;background:var(--accent);color:#1b1400;border-radius:8px;padding:0 10px;font-weight:700;font-size:13px;margin-inline-start:8px}
+.q.isHard{border-inline-start:6px solid var(--accent)}
+.filt{display:flex;align-items:center;gap:8px;font-size:15px;margin:6px 0;cursor:pointer;min-height:44px}
+.filt input{width:20px;height:20px}
+
+/* ===== new labs ===== */
+.lyr{display:flex;flex-direction:column;gap:6px;max-width:470px;margin:8px auto}
+.ly{font:inherit;font-weight:700;border:2px solid transparent;border-radius:12px;padding:9px 12px;cursor:pointer;color:#10211f;text-align:center;direction:ltr;line-height:1.5}
+.ly small{display:block;font-weight:500;opacity:.85}
+.ly.user{background:#cfe8ff}.ly.app{background:#d3f0d6}.ly.os{background:#fbf0b9}.ly.hw{background:#ffd9b8}
+.ly.sel,.ly.glow{border-color:var(--ink);box-shadow:0 0 0 4px rgba(245,158,11,.55)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.vt{border:2px solid var(--ink);border-radius:12px;overflow:hidden;direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px;margin:8px 0}
+.vt .r{display:flex;justify-content:space-between;gap:10px;padding:5px 12px;border-top:1px solid var(--line);background:var(--card)}
+.vt .r:first-child{border-top:0;background:var(--ink);color:var(--bg);font-weight:700}
+.vt .r.hl{background:var(--brand-soft);box-shadow:inset 4px 0 0 var(--accent)}
+.pyr{display:flex;flex-direction:column;align-items:center;gap:5px;direction:ltr;margin:8px 0}
+.pl{font:inherit;font-weight:700;font-size:14px;border:2px solid transparent;border-radius:10px;padding:7px 4px;cursor:pointer;color:#fff;min-height:40px}
+.pl.sel{border-color:var(--ink);box-shadow:0 0 0 3px rgba(245,158,11,.55)}
+.dash{width:100%;border-top:2px dashed var(--muted);font-size:12px;color:var(--muted);text-align:center;margin:2px 0}
+.pyrcap{text-align:center;color:var(--muted);font-size:13.5px;font-weight:600}
+.mrow{display:flex;align-items:center;gap:10px;margin:7px 0}
+.mrow>span{flex:none;width:128px;font-size:14px}
+.mrow .bar{flex:1;height:14px;margin:0}
+.bar i.cpu{background:var(--accent)}
+.bar i.blue{background:var(--brand)}
+.pool{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.bstep{font:inherit;font-size:15px;text-align:start;direction:ltr;background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:44px}
+.bstep.done{border-color:var(--good);background:var(--good-soft);cursor:default}
+.sm-card{background:var(--code-bg);border-radius:14px;padding:12px 14px;margin:8px 0;font-weight:600;direction:ltr;text-align:left;line-height:1.7}
+.sm-opts{display:flex;flex-wrap:wrap;gap:8px;direction:ltr}
+.tl{direction:ltr;overflow-x:auto;padding:4px 0}
+.tlrow{display:flex;gap:2px;align-items:center;margin:3px 0;width:max-content}
+.tlrow>b{flex:none;width:58px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.tc{flex:none;width:24px;height:26px;border-radius:5px;background:var(--line);font-size:11px;display:grid;place-items:center;color:#fff;font-family:ui-monospace,Menlo,Consolas,monospace}
+.tc.j0{background:#2563eb}.tc.j1{background:#0f9d6e}.tc.j2{background:#d9731a}
+.tc.io{background:transparent;border:2px solid;color:var(--ink)}
+.tc.io.j0{border-color:#2563eb}.tc.io.j1{border-color:#0f9d6e}.tc.io.j2{border-color:#d9731a}
+.tc.idle{background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(128,128,128,.28) 4px 8px)}
+.tc.axis{background:transparent;color:var(--muted);height:16px}
+.mode{display:flex;align-items:center;justify-content:space-between;gap:10px;border:2px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0;background:var(--card)}
+.mpill{font-weight:700;border-radius:99px;padding:2px 18px;direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace}
+.mpill.user{background:#cfe8ff;color:#0b2b52}.mpill.kernel{background:#fbd9b8;color:#5a2a05}
+.mt{margin:6px 0}
+.mt .mrow>span{width:110px}
+.cr{display:grid;gap:12px;grid-template-columns:1fr;margin:10px 0}
+@media(min-width:640px){.cr{grid-template-columns:1fr 1fr}}
+.crbox{border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--card);direction:ltr}
+.crbox h4{margin:0 0 6px;font-size:14.5px}
+.kz{border-radius:8px;padding:5px 8px;margin:4px 0;font-size:13px;font-weight:700;background:#bfe3d9;color:#0b2b26;text-align:center}
+.kz.us{background:#d3f0d6}.kz.drv{background:#fde7a8}
+.kz.dead{background:#f5b3bd;color:#5b0d1b;animation:shake .25s 3}
+.kz.hw{background:#cfd8dc;color:#222}
+.crbox.down{border-color:var(--bad);background:var(--bad-soft)}
+.crbox.up{border-color:var(--good)}
+
+.hrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.by{font-weight:700;font-size:14px;color:#9ff7e4;direction:ltr;unicode-bidi:isolate;background:rgba(255,255,255,.08);border-radius:99px;padding:3px 14px;border:1px solid rgba(127,245,222,.35)}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ahM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8791ab"/></marker>
+  <marker id="ahA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f59e0b"/></marker>
+</defs></svg>
+<header class="hero">
+  <span class="fchip" style="top:26px;right:5%;animation-delay:.5s" aria-hidden="true">syscall()</span>
+  <span class="fchip" style="top:90px;right:44%;animation-delay:2s" aria-hidden="true">interrupt</span>
+  <span class="fchip" style="top:40px;left:36%;animation-delay:3.2s" aria-hidden="true">PCB</span>
+  <span class="fchip" style="bottom:50px;right:14%;animation-delay:1.4s" aria-hidden="true">kernel mode</span>
+  <div class="wrap"><div class="hero-in">
+    <div class="hero-txt">
+      <div class="hrow"><span class="eyebrow"><i></i>Operating Systems • 2nd Year CS</span><span class="by">Dr. Ali A. Ahmed</span></div>
+      <h1><span class="grad">Operating Systems</span></h1>
+      <p class="lead">شرح مبسّط للمفاهيم بتجارب تفاعلية، وبنك أسئلة بتوضيح لكل إجابة، وأسئلة مقالية بإجابات نموذجية.</p>
+      
+    </div>
+    <svg class="orbit" viewBox="0 0 300 300" role="img" aria-label="User, Applications, Kernel, CPU rings">
+      <defs><radialGradient id="cg" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#ffd978"/><stop offset="1" stop-color="#e0a021"/></radialGradient></defs>
+      <circle cx="150" cy="150" r="140" fill="rgba(255,255,255,.07)" stroke="#7ff5de" stroke-opacity=".6" stroke-width="2"/>
+      <circle cx="150" cy="150" r="108" fill="rgba(15,118,110,.45)" stroke="#7ff5de" stroke-opacity=".7" stroke-width="2"/>
+      <circle cx="150" cy="150" r="76" fill="rgba(20,144,127,.75)" stroke="#bff9ee" stroke-opacity=".8" stroke-width="2"/>
+      <g class="orb"><circle cx="150" cy="10" r="5" fill="#7ff5de"/></g>
+      <g class="orb o2"><circle cx="150" cy="42" r="4.5" fill="#fcd46a"/></g>
+      <g class="orb o3"><circle cx="150" cy="74" r="4" fill="#fff"/></g>
+      <text x="150" y="28" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">User</text>
+      <text x="150" y="60" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Applications</text>
+      <text x="150" y="92" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Kernel</text>
+      <g class="core"><circle cx="150" cy="150" r="44" fill="url(#cg)"/>
+      <text x="150" y="148" text-anchor="middle" fill="#3a2800" font-size="15" font-weight="700">CPU</text>
+      <text x="150" y="164" text-anchor="middle" fill="#3a2800" font-size="9.5" font-weight="700">RAM · I/O</text></g>
+    </svg>
+  </div></div>
+  <svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 C 220 70 460 4 720 28 C 980 52 1220 70 1440 22 L1440 60 L0 60Z" fill="var(--bg)"/></svg>
+</header>
+<div class="wrap"><div class="lec-tabs" id="lecTabs" role="tablist">
+  <button class="lt act" data-l="1" role="tab"><b>المحاضرة 1</b><small>Intro, Computer Organization &amp; Interrupts</small></button>
+  <button class="lt" data-l="2" role="tab"><b>المحاضرة 2</b><small>System Types, Services, System Calls &amp; Structure</small></button>
+  <button class="lt" data-l="3" role="tab"><b>المحاضرة 3</b><small>Processes — Process Concept</small></button>
+</div></div>
+<nav id="sub" role="tablist"><div class="wrap navin">
+  <button role="tab" data-t="explain" class="act">شرح المفاهيم</button>
+  <button role="tab" data-t="quiz">الكويز</button>
+  <button role="tab" data-t="essay">أسئلة مقالية</button>
+</div></nav>
+<main class="wrap"><div class="lec" id="lec1">
+<div class="panel" data-t="explain">
+<section id="a-os">
+  <h2>١) يعني إيه Operating System؟</h2>
+  <p>تخيّل فندق 🏨: النزلاء (المستخدمين) مش بيدخلوا المطبخ ولا بيظبطوا الكهربا بنفسهم، بيكلّموا <b>موظف الاستقبال</b> وهو اللي يدبّر كل حاجة. نظام التشغيل (OS) بالظبط كده: واقف بينك وبين الـ Hardware.</p>
+  <div class="def">OS = برنامج وسيط بين المستخدم والـ Hardware، وهو "مدير" الكمبيوتر</div>
+  <div class="card">
+    <p><b>أهداف الـ OS:</b></p>
+    <ul><li>ينفّذ برامج المستخدم ويسهّل حل مشاكله.</li><li>يخلّي الكمبيوتر <b>سهل الاستخدام</b> (convenient).</li><li>يستخدم الـ Hardware بشكل <b>كفء</b> (efficient).</li></ul>
+  </div>
+  <div class="card">
+    <p><b>Hardware</b> — الموارد الأساسية: CPU, Memory, I/O devices.</p>
+    <p><b>Operating System</b> — بين البرامج والـ hardware وبيدّي وصول منظّم للموارد.</p>
+    <p><b>Application programs</b> — Word, Browser, Games… بتستخدم الموارد لحل مشاكل المستخدم.</p>
+    <p><b>Users</b> — ناس، أو أجهزة، أو كمبيوترات تانية.</p>
+  </div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ١: طبقات الكمبيوتر</span>
+    <p class="muted" style="margin:2px 0">دوس على أي طبقة تعرف دورها، أو شغّل رحلة "Save" وشوف الطلب بيعدّي على الطبقات إزاي.</p>
+    <div class="lyr" id="A-layers"></div>
+    <div class="info" id="A-linfo">اختار طبقة 👆</div>
+    <div class="row"><button class="btn hot" id="A-journey">▶ رحلة: دوس Save في Word</button></div>
+  </div>
+</section>
+
+<section id="a-view">
+  <h2>٢) الـ OS بيعمل إيه؟ وإيه هو الـ Kernel؟</h2>
+  <div class="tw"><table class="tbl">
+    <tr><th></th><th>User View 👤</th><th>System View ⚙️</th></tr>
+    <tr><td>بيهتم بإيه</td><td>سهولة الاستخدام وأداء كويس</td><td>إدارة الموارد بكفاءة وعدل</td></tr>
+    <tr><td>الـ OS هنا</td><td>بيخفي تعقيد الـ Hardware</td><td><b>Resource allocator</b> (CPU, Memory, Storage, I/O) + <b>Control program</b> (يمنع الأخطاء)</td></tr>
+  </table></div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٢: نوع الجهاز بيغيّر أولويات الـ OS</span>
+    <div class="tabs" id="A-dev"></div>
+    <div class="info" id="A-devinfo"></div>
+  </div>
+  <h3>الـ Kernel</h3>
+  <div class="card">
+    <p>الـ <b>Kernel</b> هو القلب بتاع الـ OS، وبيتحكم في الـ hardware والأجهزة الطرفية:</p>
+    <ul><li>بيتحمّل <b>أول حاجة</b> لما الجهاز يشتغل.</li><li>بيفضل في الـ <b>RAM</b> طول الوقت.</li><li>بيدير الـ CPU والذاكرة والوصول للأجهزة.</li></ul>
+  </div>
+  <div class="callout">💡 غير الـ Kernel فيه نوعين برامج: <b>System programs</b> و <b>Application programs</b>. يعني المتصفح مش جزء من الـ Kernel.</div>
+</section>
+
+<section id="a-hw">
+  <h2>٣) مكونات الكمبيوتر وإزاي بتتكلم مع بعض</h2>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٣: دوس على المكوّن</span>
+    <div class="chips" id="A-hwchips"></div>
+    <div class="info" id="A-hwinfo">اختار مكوّن 👆</div>
+  </div>
+  <div class="tw"><table class="tbl">
+    <tr><th>Device Controller</th><th>Device Driver</th></tr>
+    <tr><td>شريحة صغيرة متركّبة على الجهاز، بتدير شغله البسيط والـ local buffer</td><td>Software بيعرف يكلّم controller معيّن، زي مترجم بين الـ OS والـ hardware</td></tr>
+  </table></div>
+  <div class="callout">🔁 <b>رحلة طلب I/O:</b> البرنامج يطلب من الـ OS ← الـ OS يأمر الـ controller ← الـ controller يشتغل لوحده والـ CPU يكمل شغل تاني ← لما يخلص يبعت <b>Interrupt</b>.</div>
+</section>
+
+<section id="a-int">
+  <h2>٤) الـ Interrupts</h2>
+  <div class="def">Interrupt = إشارة لـ CPU تقوله: "وقّف اللي بتعمله واهتم بالموضوع ده دلوقتي"</div>
+  <div class="card">
+    <p><b>Hardware Interrupt:</b> بييجي من جهاز (مثلاً الـ Disk خلّص قراءة).</p>
+    <p><b>Software Interrupt (Trap):</b> بيحصل بسبب <b>خطأ</b> (قسمة على صفر، وصول غلط للذاكرة) أو <b>طلب</b> من برنامج لخدمة من الـ OS (System Call).</p>
+    <p><b>Interrupt Vector:</b> جدول فيه عناوين كل الـ service routines، فالـ CPU بيروح للعنوان مباشرة من غير بحث.</p>
+  </div>
+  <div class="callout">⚠️ لازم الـ Interrupt يتعالج <b>بسرعة</b>، ولازم حالة الـ Process المتقطّعة تتحفظ عشان تكمّل من نفس المكان. والـ OS اسمه <b>interrupt-driven</b>: بيقعد مستني ويرد على الأحداث لما تيجي.</div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٤: شوف الـ Interrupt خطوة بخطوة</span>
+    <p class="muted" style="margin:2px 0">الـ CPU شغال على برنامج Word. اختار حدث وتابع الخطوات الخمسة.</p>
+    <div class="tabs" id="A-ev"></div>
+    <div class="dots" id="A-idots"></div>
+    <div class="csg" style="grid-template-columns:1fr 1fr">
+      <div class="cbox cpu" id="A-icpu"></div>
+      <div class="cbox" id="A-isaved"></div>
+    </div>
+    <div class="vt" id="A-vt"></div>
+    <div class="msg" id="A-imsg">اختار حدث من فوق 👆</div>
+    <div class="row"><button class="btn" id="A-inext">الخطوة اللي بعدها ▶</button><button class="btn alt" id="A-ireset">↺ من الأول</button></div>
+  </div>
+</section>
+
+<section id="a-sto">
+  <h2>٥) هرم التخزين (Storage Hierarchy)</h2>
+  <p>القاعدة: <b>الأسرع = الأصغر والأغلى</b>. كل ما تنزل الهرم السعة تكبر والسرعة تقل والسعر لكل byte يرخص. فوق الخط المنقّط الذاكرة <b>volatile</b> (بتضيع لما الكهربا تقطع).</p>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٥: دوس على أي مستوى</span>
+    <div class="pyrcap">⬆ أسرع • أصغر • أغلى</div>
+    <div class="pyr" id="A-pyr"></div>
+    <div class="pyrcap">⬇ أبطأ • أكبر • أرخص</div>
+    <div class="info" id="A-pinfo">اختار مستوى 👆</div>
+  </div>
+</section>
+
+<section id="a-dma">
+  <h2>٦) DMA — Direct Memory Access</h2>
+  <div class="card">
+    <p>🔴 <b>المشكلة:</b> لو الـ CPU اتقاطع على كل byte في نقل ملف كبير هيضيع وقت رهيب.</p>
+    <p>🟢 <b>الحل:</b> DMA controller بينقل <b>blocks</b> من البيانات بين الجهاز والذاكرة من غير ما الـ CPU يتدخل.</p>
+    <p>⚙️ الـ CPU بيدّي أمر واحد (source, destination, length) والـ DMA بيعمل النقل كله.</p>
+    <p>🏁 interrupt <b>واحد</b> بس في الآخر، والـ CPU فاضي لشغل تاني.</p>
+  </div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٦: بدون DMA ضد مع DMA</span>
+    <div class="tabs"><button class="btn on" id="A-d0">بدون DMA</button><button class="btn alt" id="A-d1">مع DMA</button></div>
+    <div class="mrow"><span>تقدّم النقل</span><div class="bar"><i class="blue" id="A-dp"></i></div></div>
+    <div class="mrow"><span>الـ CPU مشغول بـ</span><div class="bar"><i class="cpu" id="A-dc"></i></div></div>
+    <p style="margin:6px 0">عدد مرات إزعاج الـ CPU: <b id="A-dn" class="chip">0</b></p>
+    <div class="msg" id="A-dmsg">اختار الوضع ودوس ابدأ 👇</div>
+    <div class="row"><button class="btn hot" id="A-dgo">📁 ابدأ نقل ملف كبير</button></div>
+  </div>
+</section>
+
+<section id="a-boot">
+  <h2>٧) إزاي الكمبيوتر بيفتح؟ (Boot Process)</h2>
+  <p>الـ RAM فاضية لما تدوس Power، فلازم برنامج صغير "ثابت" يبدأ الحكاية، وده الـ <b>Bootstrap</b> المخزّن في <b>ROM</b> (لأن الـ ROM بتحتفظ بمحتواها حتى لو الكهربا قطعت).</p>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٧: رتّب خطوات الـ Boot</span>
+    <p class="muted" style="margin:2px 0">دوس على الخطوات بالترتيب الصح من الأول للآخر.</p>
+    <div class="pool" id="A-bpool"></div>
+    <div class="msg" id="A-bmsg">ابدأ بأول خطوة 👆</div>
+    <div class="row"><button class="btn alt" id="A-breset">↺ اخلط من جديد</button></div>
+  </div>
+</section>
+
+<section id="a-sum">
+  <h2>ملخص سريع قبل الأسئلة</h2>
+  <div class="card"><ul>
+    <li>OS = وسيط بين المستخدم والـ hardware. User view: سهولة، System view: إدارة موارد (Resource allocator + Control program).</li>
+    <li>الـ Kernel أول حاجة بتتحمّل وبتفضل في الـ RAM.</li>
+    <li>الـ device controller على الجهاز، والـ driver software بيكلّمه.</li>
+    <li>Interrupt = إشارة للـ CPU. Hardware من جهاز، Trap من خطأ أو طلب. بنوصل للـ ISR من الـ Interrupt Vector.</li>
+    <li>هرم التخزين: Registers ← Cache ← RAM ← SSD ← HDD ← Optical ← Tape (أسرع لأبطأ، أصغر لأكبر).</li>
+    <li>DMA بينقل blocks من غير الـ CPU، وبـ interrupt واحد في النهاية.</li>
+    <li>Boot: Power on ← Bootstrap (ROM) ← تحميل الـ Kernel ← init ← استنى حدث.</li>
+  </ul></div>
+  <h3>قاموس سريع</h3>
+  <div class="gl">
+    <div><b>Kernel</b> — قلب الـ OS.</div>
+    <div><b>ISR</b> — الروتين اللي بيعالج الـ interrupt.</div>
+    <div><b>Volatile</b> — بتفقد محتواها لما الكهربا تقطع.</div>
+    <div><b>Bus</b> — مسار مشترك بيوصل الـ CPU بالذاكرة والأجهزة.</div>
+    <div><b>Buffer</b> — مساحة مؤقتة جوه الـ controller.</div>
+    <div><b>ROM</b> — ذاكرة للقراءة بس، بتحتفظ بمحتواها.</div>
+    <div><b>Trap</b> — Interrupt بيتولّد من software.</div>
+    <div><b>Bootstrap</b> — برنامج البداية المخزّن في ROM.</div>
+  </div>
+</section>
+
+<div class="row nextrow"><button class="btn" data-go="1:quiz">التالي: الكويز ←</button></div>
+</div>
+<div class="panel" data-t="quiz" hidden></div>
+<div class="panel" data-t="essay" hidden></div>
+</div><div class="lec" id="lec2" hidden>
+<div class="panel" data-t="explain">
+<section id="b-evo">
+  <h2>١) تطوّر الأنظمة: Batch ← Multiprogramming ← Time-sharing</h2>
+  <p>تخيّل محل تصوير 🖨️ فيه ماكينة واحدة (الـ CPU):</p>
+  <div class="tw"><table class="tbl">
+    <tr><th>النظام</th><th>الفكرة</th><th>في المحل</th></tr>
+    <tr><td><b>Batch</b></td><td>تجميع jobs متشابهة عشان نقلل وقت التجهيز. الـ OS بينقل التحكم من job للتانية أوتوماتيك. <b>مفيش تفاعل</b> مع المستخدم أثناء التنفيذ.</td><td>تسيب ملفاتك وترجع بعدين تلاقيها خلصت.</td></tr>
+    <tr><td><b>Multiprogramming</b></td><td>أكتر من job في الـ RAM، والـ CPU بيتحوّل لـ job تانية لما الأولى تستنى I/O. الهدف: <b>CPU utilization</b> أعلى.</td><td>الموظف يبدأ ملف تاني وهو مستني الماكينة تخلّص.</td></tr>
+    <tr><td><b>Time-Sharing</b></td><td>نفس الفكرة بس التبديل سريع جداً فالمستخدم يتفاعل <b>online</b> ويشوف رد فوري. الـ jobs بتتعمل <b>swap</b> بين الـ RAM والـ Disk.</td><td>الموظف بيدّي كل عميل دقيقة وبيلف عليهم بسرعة.</td></tr>
+  </table></div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ١: CPU Timeline</span>
+    <p class="muted" style="margin:2px 0">٣ jobs، كل واحدة: CPU لوحدتين، بعدين I/O لـ 3 وحدات، بعدين CPU لوحدة. قارن النظم التلاتة.</p>
+    <div class="tabs" id="B-sim"></div>
+    <div class="tl" id="B-tl"></div>
+    <div class="info" id="B-simi"></div>
+  </div>
+</section>
+
+<section id="b-types">
+  <h2>٢) باقي أنواع الأنظمة</h2>
+  <div class="tw"><table class="tbl">
+    <tr><th>النوع</th><th>أهم حاجة تفتكرها</th></tr>
+    <tr><td><b>Desktop</b></td><td>مستخدم واحد. الأولوية للراحة والاستجابة (Windows, macOS, Linux, UNIX).</td></tr>
+    <tr><td><b>Multiprocessor</b></td><td>أكتر من CPU <b>Tightly coupled</b> (بيشاركوا الذاكرة والـ clock). مزاياه: throughput أعلى، اقتصادي، reliability (graceful degradation).</td></tr>
+    <tr><td><b>Distributed</b></td><td><b>Loosely coupled</b>: كل processor له ذاكرته ويتواصلوا بالشبكة. مزاياه: resource sharing، speed-up، reliability.</td></tr>
+    <tr><td><b>Clustered</b></td><td>جهازين أو أكتر بيشاركوا storage. <b>Asymmetric</b>: واحد يشتغل والباقي backup. <b>Symmetric</b>: كلهم يشغّلوا التطبيق.</td></tr>
+    <tr><td><b>Real-Time</b></td><td>deadlines صارمة. <b>Hard</b> (كارثة لو اتأخر) أو <b>Soft</b> (جودة أقل بس).</td></tr>
+    <tr><td><b>Handheld</b></td><td>ذاكرة محدودة، معالج أبطأ، شاشة صغيرة.</td></tr>
+    <tr><td><b>Embedded</b></td><td>إمكانيات OS محدودة جداً، غالباً من غير UI أو وصول عن بعد.</td></tr>
+  </table></div>
+  <div class="callout">⚖️ <b>Hard ولا Soft؟</b> اسأل: "لو الـ deadline فات، هل ده كارثة ولا مجرد هبوط بسيط في الجودة؟" كارثة = Hard، هبوط بسيط = Soft. الـ Hard RT غالباً مفيهوش secondary storage كبير ومش مناسب مع time-sharing.</div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٢: مين النوع المناسب؟</span>
+    <div id="B-m1"></div>
+  </div>
+</section>
+
+<section id="b-serv">
+  <h2>٣) خدمات نظام التشغيل (OS Services)</h2>
+  <div class="tw"><table class="tbl">
+    <tr><th>بتفيد المستخدم 👤</th><th>بتضمن كفاءة النظام ⚙️</th></tr>
+    <tr><td>User interface (CLI, GUI, touch)<br>Program execution<br>I/O operations<br>File-system manipulation<br>Communications بين الـ processes<br>Error detection</td><td>Resource allocation<br>Accounting (تتبّع استخدام الموارد)<br>Protection and security<br>Logging للمراجعة أو الـ debugging</td></tr>
+  </table></div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٣: الخدمة دي لمين؟</span>
+    <div id="B-m2"></div>
+  </div>
+</section>
+
+<section id="b-sys">
+  <h2>٤) Dual-Mode و System Calls</h2>
+  <p>لو أي برنامج قدر يكلّم الـ hardware مباشرة، برنامج واحد غلطان ممكن يوقّف الجهاز. عشان كده الـ CPU فيه <b>mode bit</b>:</p>
+  <div class="card">
+    <p><b>User mode:</b> الوضع العادي للبرامج. ممنوع الـ privileged instructions.</p>
+    <p><b>Kernel mode:</b> للـ OS بس. مسموح بالـ privileged instructions (I/O، التحكم في الـ interrupts، تغيير الـ mode).</p>
+    <p>لو برنامج حاول ينفّذ privileged instruction في user mode ← <b>Trap</b> للـ OS بدل ما تتنفّذ.</p>
+  </div>
+  <div class="def">System Call = الطريقة المسموحة اللي البرنامج بيطلب بيها خدمة من الـ Kernel</div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٤: Mode Bit</span>
+    <div class="mode"><b>الـ CPU شغال في:</b><span class="mpill user" id="B-pill">USER MODE</span></div>
+    <div class="row">
+      <button class="btn alt" id="B-b1">➕ x = 5 + 3</button>
+      <button class="btn alt" id="B-b2">⛔ نفّذ I/O instruction مباشرة</button>
+      <button class="btn hot" id="B-b3">📞 نادي read()</button>
+    </div>
+    <div class="dots" id="B-sdots"></div>
+    <div class="msg" id="B-smsg">جرّب الأزرار 👆</div>
+  </div>
+  <h3>أنواع الـ System Calls</h3>
+  <div class="tw"><table class="tbl">
+    <tr><th>النوع</th><th>الغرض</th><th>Windows / Unix</th></tr>
+    <tr><td>Process Control</td><td>إنشاء وإنهاء وإدارة processes</td><td class="en">CreateProcess() / fork()</td></tr>
+    <tr><td>File Management</td><td>إنشاء وحذف وقراءة وكتابة ملفات</td><td class="en">CreateFile() / open()</td></tr>
+    <tr><td>Device Management</td><td>طلب وتحرير أجهزة</td><td class="en">ReadConsole() / ioctl()</td></tr>
+    <tr><td>Information Maintenance</td><td>جلب أو تعديل بيانات النظام (وقت، PID)</td><td class="en">GetCurrentProcessID() / getpid()</td></tr>
+    <tr><td>Communication</td><td>تبادل بيانات بين processes</td><td class="en">CreatePipe() / pipe()</td></tr>
+    <tr><td>Protection</td><td>التحكم في الوصول للموارد</td><td class="en">SetFileSecurity() / chmod()</td></tr>
+  </table></div>
+  
+</section>
+
+<section id="b-str">
+  <h2>٥) تركيب نظام التشغيل (OS Structure)</h2>
+  <p>تصميم الـ OS دايماً مفاضلة بين <b>الأداء</b> وبين <b>البساطة والأمان وسهولة الصيانة</b>. دوس على كل تصميم:</p>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٦: قارن التصاميم</span>
+    <div class="tabs" id="B-st"></div>
+    <div class="info" id="B-sti"></div>
+    <div class="mt" id="B-stm"></div>
+  </div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٧: لو Driver ضرب؟</span>
+    <div class="cr">
+      <div class="crbox" id="B-c1"><h4>Monolithic Kernel</h4><div class="kz">Kernel (كل الخدمات)</div><div class="kz drv" id="B-d1">Driver جوه الـ Kernel</div><div class="kz hw">Hardware</div></div>
+      <div class="crbox" id="B-c2"><h4>Microkernel</h4><div class="kz us">User mode</div><div class="kz drv" id="B-d2">Driver (Server في user space)</div><div class="kz us">File Server</div><div class="kz">Microkernel (IPC, Memory, Scheduling)</div><div class="kz hw">Hardware</div></div>
+    </div>
+    <div class="row"><button class="btn hot" id="B-crash">💥 خلّي الـ Driver يضرب</button><button class="btn alt" id="B-crreset">↺ رجّع</button></div>
+    <div class="msg" id="B-cmsg">دوس على الزرار 👆</div>
+  </div>
+</section>
+
+<section id="b-sum">
+  <h2>ملخص سريع قبل الأسئلة</h2>
+  <div class="card"><ul>
+    <li>Batch: من غير تفاعل. Multiprogramming: أكتر من job في الـ RAM لرفع الـ utilization. Time-sharing: تبديل سريع وتفاعل online.</li>
+    <li>Multiprocessor = tightly coupled. Distributed = loosely coupled. Clustered = shared storage (Asymmetric / Symmetric).</li>
+    <li>Real-time: Hard (كارثة لو فات الـ deadline) و Soft (جودة أقل).</li>
+    <li>خدمات الـ OS: للمستخدم (UI, Program execution, I/O, Files, Communication, Errors) وللنظام (Allocation, Accounting, Protection, Logging).</li>
+    <li>Mode bit: User / Kernel. الـ privileged instruction في user mode ← Trap. الـ System Call هو البوابة المنظمة للـ kernel.</li>
+    <li>Structures: Monolithic (سريع)، Layered (سهل debugging)، Microkernel (موثوق وأبطأ)، Modules (مرن)، Hybrid (مزيج).</li>
+  </ul></div>
+  <h3>قاموس سريع</h3>
+  <div class="gl">
+    <div><b>Job</b> — شغلانة بتتنفّذ على الكمبيوتر.</div>
+    <div><b>Utilization</b> — نسبة الوقت اللي الـ CPU بيشتغل فيه فعلاً.</div>
+    <div><b>Swap</b> — نقل job بين الـ RAM والـ Disk.</div>
+    <div><b>Coupling</b> — درجة اعتماد الـ processors على بعض (ذاكرة مشتركة ولا لأ).</div>
+    <div><b>Privileged instruction</b> — أمر مسموح بس في kernel mode.</div>
+    <div><b>Trap</b> — انتقال للـ OS بسبب خطأ أو طلب.</div>
+    <div><b>IPC</b> — تواصل بين الـ processes.</div>
+    <div><b>LKM</b> — Loadable Kernel Module، خدمة بتتحمّل وقت التشغيل.</div>
+  </div>
+</section>
+
+<div class="row nextrow"><button class="btn" data-go="2:quiz">التالي: الكويز ←</button></div>
+</div>
+<div class="panel" data-t="quiz" hidden></div>
+<div class="panel" data-t="essay" hidden></div>
+</div><div class="lec" id="lec3" hidden>
+<div class="panel" data-t="explain">
+<section id="s-idea">
+  <h2>١) يعني إيه Process؟</h2>
+  <p>لما بتفتح أي برنامج (Chrome، Word، لعبة…) نظام التشغيل (OS) بيعمل حاجة اسمها <b>Process</b>. عشان نفهمها هنستخدم مثال <b>المطعم 🍽️</b> في الشرح كله:</p>
+  <div class="tw"><table class="tbl">
+    <tr><th>في المطعم</th><th>في نظام التشغيل</th></tr>
+    <tr><td>كتاب الوصفات على الرف 📖</td><td><b>Program</b> — ملف ساكن على الـ Disk</td></tr>
+    <tr><td>طلب بيتحضّر فعلاً دلوقتي 🍳</td><td><b>Process</b></td></tr>
+    <tr><td>الشيف (واحد بس!) 👨‍🍳</td><td><b>CPU</b></td></tr>
+    <tr><td>ورقة الطلب اللي مكتوب عليها وصلنا لفين 📝</td><td><b>PCB</b></td></tr>
+    <tr><td>الشيف يسيب طلب ويروح لطلب تاني</td><td><b>Context Switch</b></td></tr>
+    <tr><td>مدير المطعم اللي بيقرر مين الطلب الجاي</td><td><b>Scheduler</b></td></tr>
+  </table></div>
+  <div class="def">Process = Program in Execution (برنامج بيتنفّذ دلوقتي)</div>
+  <h3>الفرق بين Program و Process</h3>
+  <div class="tw"><table class="tbl">
+    <tr><th>وجه المقارنة</th><th>Program</th><th>Process</th></tr>
+    <tr><td>النوع</td><td>Passive (ساكن)</td><td>Active (نشط)</td></tr>
+    <tr><td>مكانه</td><td>على الـ Disk</td><td>في الـ RAM</td></tr>
+    <tr><td>عمره</td><td>طويل، لحد ما تمسحه</td><td>قصير، من التشغيل لحد الإنهاء</td></tr>
+    <tr><td>بيستهلك إيه؟</td><td>مساحة تخزين بس</td><td>CPU + Memory + Files + I/O</td></tr>
+    <tr><td>العدد</td><td>ملف واحد</td><td>من Program واحد ممكن تطلع Processes كتير</td></tr>
+  </table></div>
+
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ١: شغّل نفس البرنامج أكتر من مرة</span>
+    <div class="prog"><span class="ico">📄</span><div><b class="en">chrome.exe</b><br><small class="muted">Program على الـ Disk — مجرد ملف ساكن</small></div></div>
+    <div class="row">
+      <button class="btn" id="l1-run">▶ شغّل (Run)</button>
+      <button class="btn alt" id="l1-rot">🔄 بدّل الـ CPU</button>
+      <button class="btn alt" id="l1-clr">⏹ اقفل الكل</button>
+    </div>
+    <div class="plist" id="l1-list"></div>
+    <div class="msg" id="l1-msg"></div>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s-mem">
+  <h2>٢) الـ Process شكلها إيه جوه الـ RAM؟</h2>
+  <p>لما الـ Process تتحمّل في الذاكرة بتتقسّم لـ 4 أجزاء:</p>
+  <div class="card">
+    <p><span class="pill k-text">Text</span> الكود نفسه (الـ instructions) — ثابت وغالباً read-only.</p>
+    <p><span class="pill k-data">Data</span> المتغيرات الـ <code>global</code> و <code>static</code>.</p>
+    <p><span class="pill k-heap">Heap</span> الذاكرة الديناميكية (<code>malloc</code> / <code>new</code>) — بتكبر لفوق ⬆ وإنت المسؤول تحررها.</p>
+    <p><span class="pill k-stack">Stack</span> الـ local variables و parameters و return address — بتكبر لتحت ⬇ وبتتمسح أوتوماتيك.</p>
+  </div>
+  <p>شوف الكود ده وحدّد كل سطر هيروح فين:</p>
+<pre class="code"><span class="k-data">int counter = 0;</span>              // global  -> Data
+
+<span class="k-text">int main() {</span>                      // الكود نفسه -> Text
+    <span class="k-stack">int x = 5;</span>                    // local   -> Stack
+    <span class="k-heap">int *p = malloc(100);</span>        // 100 byte -> Heap
+    // (المتغير p نفسه موجود على الـ Stack)
+    <span class="k-heap">free(p);</span>                       // تحرير الـ Heap
+}</pre>
+
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٢: الـ Stack والـ Heap</span>
+    <p class="muted" style="margin:2px 0">دوس على أي جزء تعرف إيه فيه. وجرّب الأزرار تشوف الـ Stack بيكبر لتحت والـ Heap بيكبر لفوق.</p>
+    <div class="memgrid">
+      <div>
+        <div class="addr">High address ⬆</div>
+        <div class="mem" id="mem">
+          <div class="reg r-stack" data-r="stack" tabindex="0"><span class="rl">Stack ⬇</span><div class="items" id="stk"></div></div>
+          <div class="gap">Free space</div>
+          <div class="reg r-heap" data-r="heap" tabindex="0"><div class="items rev" id="hp"></div><span class="rl">Heap ⬆</span></div>
+          <div class="reg r-data" data-r="data" tabindex="0"><span class="rl">Data</span><small>global / static</small></div>
+          <div class="reg r-text" data-r="text" tabindex="0"><span class="rl">Text (Code)</span><small>instructions</small></div>
+        </div>
+        <div class="addr">Low address (0x0000) ⬇</div>
+      </div>
+      <div>
+        <div class="row">
+          <button class="btn" id="m-call">📞 نادي function</button>
+          <button class="btn alt" id="m-ret">↩ return</button>
+          <button class="btn hot" id="m-alloc">➕ malloc(100)</button>
+          <button class="btn alt" id="m-free">➖ free()</button>
+        </div>
+        <div class="info" id="m-info">اختار جزء من الرسمة عشان تشوف تفاصيله 👈</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s-states">
+  <h2>٣) حالات الـ Process (Process States)</h2>
+  <p>الـ Process مبتفضلش على حالة واحدة. وهي بتتنفذ بتمر بـ 5 حالات:</p>
+  <div class="card">
+    <p><b>New 🆕</b> — لسه بتتعمل. <span class="muted">(العميل دخل المطعم)</span></p>
+    <p><b>Ready ⏳</b> — جاهزة في الـ RAM وناقصها CPU بس. <span class="muted">(واقفة في طابور الشيف)</span></p>
+    <p><b>Running ▶️</b> — بتتنفذ على الـ CPU دلوقتي. <span class="muted">(الشيف شغال عليها)</span></p>
+    <p><b>Waiting ⌛</b> (أو Blocked) — مستنية حدث زي إدخال من الكيبورد أو قراءة ملف. <span class="muted">(مستنية المكوّن يوصل)</span></p>
+    <p><b>Terminated 🏁</b> — خلصت. <span class="muted">(الطلب اتسلّم)</span></p>
+  </div>
+  <div class="callout">⚠️ قاعدة مهمة: على CPU core واحد، <b>Process واحدة بس</b> تكون Running في نفس اللحظة.</div>
+
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٣: حرّك الـ Process بين الحالات</span>
+    <p class="muted" style="margin:2px 0">الأسهم البرتقالي = الحركات الممكنة من الحالة الحالية. جرّب كمان تدوس على زرار مينفعش 😉</p>
+    <div class="svgbox">
+      <svg viewBox="0 0 360 320" role="img" aria-label="Process state diagram">
+        <line class="edge" id="e-admit" x1="60" y1="60" x2="68" y2="129"/>
+        <line class="edge" id="e-dispatch" x1="126" y1="142" x2="232" y2="142"/>
+        <line class="edge" id="e-timeout" x1="234" y1="158" x2="128" y2="158"/>
+        <line class="edge" id="e-iowait" x1="266" y1="169" x2="216" y2="250"/>
+        <line class="edge" id="e-iodone" x1="144" y1="250" x2="94" y2="169"/>
+        <line class="edge" id="e-exit" x1="280" y1="130" x2="280" y2="61"/>
+        <text class="el" x="68" y="98">admitted</text>
+        <text class="el" x="180" y="135" text-anchor="middle">dispatch</text>
+        <text class="el" x="180" y="175" text-anchor="middle">interrupt</text>
+        <text class="el" x="252" y="216">I/O wait</text>
+        <text class="el" x="108" y="216" text-anchor="end">I/O done</text>
+        <text class="el" x="288" y="100">exit</text>
+        <g class="node" id="n-new"><rect x="15" y="22" width="90" height="36" rx="10"/><text x="60" y="40">New</text></g>
+        <g class="node" id="n-ready"><rect x="35" y="132" width="90" height="36" rx="10"/><text x="80" y="150">Ready</text></g>
+        <g class="node" id="n-running"><rect x="235" y="132" width="90" height="36" rx="10"/><text x="280" y="150">Running</text></g>
+        <g class="node" id="n-waiting"><rect x="135" y="252" width="90" height="36" rx="10"/><text x="180" y="270">Waiting</text></g>
+        <g class="node" id="n-terminated"><rect x="235" y="24" width="90" height="36" rx="10"/><text x="280" y="42">Terminated</text></g>
+      </svg>
+    </div>
+    <div class="sdesc" id="st-desc"></div>
+    <div class="row" id="st-btns"></div>
+    <div class="msg" id="st-msg">اختار حدث من الأزرار 👆</div>
+    <div class="trail" id="st-trail"></div>
+    <div class="row"><button class="btn alt" id="st-reset">↺ ابدأ من الأول</button></div>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s-pcb">
+  <h2>٤) الـ PCB — ملف الـ Process</h2>
+  <p>إزاي الـ OS يفتكر كل Process وصلت لفين؟ بيعمل لكل Process <b>ملف</b> اسمه <b class="en">Process Control Block (PCB)</b>، زي ملف الطالب في شؤون الطلاب 🗂️. فيه كل المعلومات اللي الـ OS محتاجها عن الـ Process.</p>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٤: افتح الـ PCB</span>
+    <p class="muted" style="margin:2px 0">دوس على أي خانة تعرف معناها.</p>
+    <div class="pcbt" id="pcbt"></div>
+    <div class="info" id="pcb-info">دوس على أي سطر في الـ PCB 👆</div>
+  </div>
+  <div class="callout">💡 الـ PCB فيها معلومات <b>إدارة</b> الـ Process، لكن مش فيها كود البرنامج نفسه (ده في الـ Text section).</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s-cs">
+  <h2>٥) Context Switch</h2>
+  <p>الـ CPU واحد والـ Processes كتير، فالـ OS بيبدّل بينهم بسرعة كبيرة (كل ملّي ثانية تقريباً) فنحس إنهم شغالين مع بعض. التبديل ده اسمه <b>Context Switch</b>:</p>
+  <div class="def">Context Switch = حفظ حالة الـ Process الحالية في PCB + تحميل حالة Process تانية على الـ CPU</div>
+  <p>الخطوات: Interrupt ← Save ← Select ← Load ← كمّل. اتفرج عليها واحدة واحدة:</p>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٥: Context Switch خطوة بخطوة</span>
+    <div class="dots" id="cs-dots"></div>
+    <div class="csg">
+      <div class="cbox" id="cs-p1"></div>
+      <div class="cbox cpu" id="cs-cpu"></div>
+      <div class="cbox" id="cs-p2"></div>
+    </div>
+    <div class="msg" id="cs-msg"></div>
+    <div class="ovh" id="cs-ovh" hidden>⚠️ Overhead: مفيش أي برنامج بيشتغل دلوقتي، الـ CPU مشغول بالتبديل بس!</div>
+    <div class="row"><button class="btn" id="cs-next">الخطوة اللي بعدها ▶</button><button class="btn alt" id="cs-reset">↺ من الأول</button></div>
+  </div>
+  <div class="callout">لأن التبديل <b>وقت ضايع (Overhead)</b>، لو بدّلنا كتير أوي الأداء بيقع. عشان كده الـ OS بيحاول يقلل عدد التبديلات بقدر الإمكان.</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s-sched">
+  <h2>٦) Scheduling والطوابير</h2>
+  <p>الـ OS بيحط الـ Processes في طوابير: <b>Job queue</b> (كل الـ Processes)، <b>Ready queue</b> (اللي جاهزة للـ CPU)، و<b>Device queues</b> (اللي مستنية I/O). الرسمة دي بتوضح الدورة:</p>
+  <div class="svgbox">
+    <svg viewBox="0 0 360 180" role="img" aria-label="Queueing diagram">
+      <rect x="20" y="40" width="130" height="36" rx="8" style="fill:var(--card);stroke:var(--ink);stroke-width:2"/>
+      <rect x="28" y="48" width="30" height="20" rx="4" style="fill:var(--brand-soft)"/><rect x="64" y="48" width="30" height="20" rx="4" style="fill:var(--brand-soft)"/><rect x="100" y="48" width="30" height="20" rx="4" style="fill:var(--brand-soft)"/>
+      <text class="el" x="85" y="90" text-anchor="middle">Ready Queue</text>
+      <line x1="150" y1="58" x2="204" y2="58" stroke="#8791ab" stroke-width="2" marker-end="url(#ahM)"/>
+      <circle cx="236" cy="58" r="30" style="fill:var(--brand);stroke:var(--brand)"/>
+      <text x="236" y="58" text-anchor="middle" dominant-baseline="central" style="fill:var(--brand-ink);font-weight:700;font-size:15px;font-family:inherit">CPU</text>
+      <line x1="266" y1="58" x2="338" y2="58" stroke="#8791ab" stroke-width="2" marker-end="url(#ahM)"/>
+      <text class="el" x="302" y="50" text-anchor="middle">exit</text>
+      <path d="M236 28 V10 H85 V38" fill="none" stroke="#8791ab" stroke-width="2" marker-end="url(#ahM)"/>
+      <text class="el" x="160" y="26" text-anchor="middle">time slice expired</text>
+      <path d="M236 88 V133" fill="none" stroke="#8791ab" stroke-width="2" marker-end="url(#ahM)"/>
+      <text class="el" x="246" y="115">I/O request</text>
+      <rect x="170" y="134" width="130" height="34" rx="8" style="fill:var(--card);stroke:var(--ink);stroke-width:2"/>
+      <text class="el" x="235" y="155" text-anchor="middle" style="font-size:12px">I/O queue (Waiting)</text>
+      <path d="M170 151 H85 V80" fill="none" stroke="#8791ab" stroke-width="2" marker-end="url(#ahM)"/>
+      <text class="el" x="92" y="125">I/O done</text>
+    </svg>
+  </div>
+  <h3>أنواع الـ Schedulers</h3>
+  <div class="tw"><table class="tbl">
+    <tr><th>النوع</th><th>بيعمل إيه؟</th><th>بيشتغل كل قد إيه؟</th></tr>
+    <tr><td><b>Long-term</b> (Job scheduler)</td><td>بيختار Jobs من الـ Disk ويدخّلها الـ Memory (Ready queue). بيتحكم في <b>degree of multiprogramming</b></td><td>نادراً (ثواني أو دقايق)</td></tr>
+    <tr><td><b>Short-term</b> (CPU scheduler)</td><td>بيختار Process من الـ Ready queue ويديها الـ CPU</td><td>كتير جداً (ملّي ثانية) فلازم يكون سريع</td></tr>
+    <tr><td><b>Medium-term</b></td><td>بيشيل Process من الـ Memory مؤقتاً (<b>Swap out</b>) ويرجّعها بعدين عشان يقلل الحمل</td><td>حسب الحاجة</td></tr>
+  </table></div>
+  <h3>نوعين من الـ Processes</h3>
+  <div class="card">
+    <p><b>I/O-bound:</b> أغلب وقتها مستنية I/O (قراءة ملفات، شبكة) ومعاها bursts قصيرة على الـ CPU.</p>
+    <p><b>CPU-bound:</b> أغلب وقتها حسابات على الـ CPU (زي معالجة فيديو) ومعاها I/O قليل.</p>
+  </div>
+
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s-ipc">
+  <h2>٨) التواصل بين الـ Processes (IPC)</h2>
+  <p>كل Process ليها ذاكرة مستقلة ومحمية، فمينفعش تقرا من ذاكرة غيرها. لو عايزين نتبادل بيانات محتاجين <b>Inter-Process Communication (IPC)</b> وليه نموذجين:</p>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٧: قارن النموذجين</span>
+    <div class="tabs"><button class="btn on" id="ipc-a">Shared Memory</button><button class="btn alt" id="ipc-b">Message Passing</button></div>
+    <div class="svgbox" id="ipc-svg"></div>
+    <div class="info" id="ipc-info"></div>
+  </div>
+</section>
+
+<!-- ============ producer consumer ============ -->
+<section id="s-pc">
+  <h2>٩) مشكلة Producer–Consumer</h2>
+  <p>من أشهر المشاكل لما Processes تتعاون مع بعض. فيه Process بتنتج بيانات وفيه Process بتستهلكها، والاتنين بيتقابلوا في <b>Buffer مشترك</b> (شغل الـ Shared Memory اللي شفناه في IPC):</p>
+  <div class="def">Producer ⟶ Buffer مشترك ⟶ Consumer</div>
+  <div class="card">
+    <p><b>Producer 🏭:</b> بينتج بيانات (Items) ويحطها في الـ Buffer.</p>
+    <p><b>Consumer 🛒:</b> بياخد البيانات من الـ Buffer ويستخدمها.</p>
+    <p><b>Buffer 📦:</b> مساحة مشتركة. لو حجمه محدود اسمه <b>Bounded Buffer</b>.</p>
+  </div>
+  <h3>المشاكل اللي لازم نحلها</h3>
+  <div class="card">
+    <p>1️⃣ <b>الـ Buffer full:</b> الـ Producer لازم يستنى (Waiting) لحد ما يتفضى مكان.</p>
+    <p>2️⃣ <b>الـ Buffer empty:</b> الـ Consumer لازم يستنى لحد ما يتحط Item.</p>
+    <p>3️⃣ <b>الاتنين يدخلوا الـ Buffer في نفس اللحظة:</b> بيحصل <b>Race Condition</b> (بيانات تضيع أو تتبوظ)، فلازم <b>Synchronization</b> (زي Mutex أو Semaphore) عشان واحد بس يعدّل في اللحظة.</p>
+  </div>
+  <h3>مثال: Print Spooler 🖨️</h3>
+  <div class="card">
+    <p>🔹 <b>3 برامج</b> (Word و Browser و PDF reader) = <b>Producers</b>، كل واحد بيبعت Print Job.</p>
+    <p>🔹 <b>الـ Print queue</b> = <b>Buffer</b>، وفيه دلوقتي Job 1 و Job 2 و Job 3.</p>
+    <p>🔹 <b>الـ Printer</b> = <b>Consumer</b>، بيسحب Job ويطبعها.</p>
+    <p>🔹 <b>ليه الـ Spooler؟</b> لأن الطابعة بطيئة، فالبرامج بتحط الـ Job في الطابور وتكمل شغلها من غير ما تستنى.</p>
+  </div>
+
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٨: Print Spooler</span>
+    <p class="muted" style="margin:2px 0">الـ Buffer بيشيل 5 Jobs بس. جرّب تملاه، وخلّي الطابعة تسحب Jobs، وجرّب الـ Race Condition.</p>
+    <p style="margin:6px 0"><b>① الـ Producers</b> (دوس عشان تطبع من البرنامج)</p>
+    <div class="row" id="pc-prod"></div>
+    <div class="pc-arrow">⬇ بيحطوا Jobs</div>
+    <p style="margin:6px 0"><b>② الـ Buffer = Print Queue</b> <span class="chip" id="pc-count">3/5</span></p>
+    <div class="slots" id="pc-slots"></div>
+    <div class="pc-arrow">⬇ الطابعة بتسحب من الأول (FIFO)</div>
+    <div class="printer" id="pc-printer">
+      <span class="pi">🖨️</span>
+      <div><b>③ الـ Consumer: Printer</b><div id="pc-pst"></div><div class="bar"><i id="pc-bar"></i></div></div>
+    </div>
+    <div class="row" style="align-items:center">
+      <button class="btn hot" id="pc-take">🖨️ الطابعة تسحب Job</button>
+      <label class="swt"><input type="checkbox" id="pc-auto"> طابعة أوتوماتيك</label>
+    </div>
+    <p style="margin:6px 0">اتطبع: <span id="pc-done"><span class="muted">لسه مفيش</span></span></p>
+    <hr style="border:0;border-top:1px dashed var(--line);margin:12px 0">
+    <p style="margin:6px 0"><b>⚡ تجربة الـ Race Condition</b></p>
+    <div class="row" style="align-items:center">
+      <label class="swt"><input type="checkbox" id="pc-sync" checked> Synchronization (Mutex) شغّال</label>
+      <button class="btn alt" id="pc-race">⚡ Word و Browser يطبعوا في نفس اللحظة</button>
+    </div>
+    <p style="margin:6px 0">Jobs ضاعت: <b id="pc-lost">0</b></p>
+    <div class="msg" id="pc-msg">الـ Buffer فيه 3 Jobs. جرّب تطبع من أي برنامج 👆</div>
+  </div>
+</section>
+
+<!-- ============ summary ============ -->
+<section id="s-sum">
+  <h2>ملخص سريع قبل الأسئلة</h2>
+  <div class="card">
+    <ul>
+      <li>Process = Program in execution. Program ساكن، Process نشط.</li>
+      <li>الذاكرة: Text, Data, Heap ⬆, Stack ⬇.</li>
+      <li>الحالات: New → Ready ⇄ Running → Terminated، ومن Running → Waiting → Ready.</li>
+      <li>PCB = ملف الـ Process (PID, State, PC, Registers, ...).</li>
+      <li>Context Switch = Save + Load، وده Overhead.</li>
+      <li>Long-term بيدخّل للـ Memory، Short-term بيدّي الـ CPU، Medium-term بيعمل Swapping.</li>
+      <li>IPC: Shared Memory أو Message Passing.</li>
+      <li>Producer–Consumer: Buffer مشترك. Producer يستنى لو full، Consumer يستنى لو empty، ولازم Synchronization عشان نمنع Race Condition. مثال: Print Spooler.</li>
+    </ul>
+  </div>
+  <h3>قاموس سريع</h3>
+  <div class="gl">
+    <div><b>Interrupt</b> — إشارة بتوقف الـ CPU مؤقتاً وتنده الـ OS.</div>
+    <div><b>Dispatch</b> — إدّي الـ CPU لـ Process من الـ Ready.</div>
+    <div><b>Quantum</b> — الوقت المسموح للـ Process على الـ CPU.</div>
+    <div><b>Overhead</b> — وقت ضايع مفيهوش شغل مفيد.</div>
+    <div><b>PID</b> — رقم الـ Process الفريد.</div>
+    <div><b>Multiprogramming</b> — أكتر من Process في الذاكرة في نفس الوقت.</div>
+    <div><b>Blocked</b> — نفس معنى Waiting.</div>
+    <div><b>Buffer</b> — مساحة مؤقتة بيتبادل فيها الـ Producer والـ Consumer البيانات.</div>
+    <div><b>Race Condition</b> — نتيجة غلط بتحصل لما أكتر من Process يعدّلوا نفس البيانات في نفس اللحظة.</div>
+  </div>
+</section>
+
+
+<div class="row nextrow"><button class="btn" data-go="3:quiz">التالي: الكويز ←</button></div>
+</div>
+<div class="panel" data-t="quiz" hidden></div>
+<div class="panel" data-t="essay" hidden></div>
+</div></main>
+<footer style="text-align:center;padding:18px;margin-top:28px;border-top:1px solid var(--line);color:var(--muted);font-size:14px">
+  <strong style="color:var(--ink);font-size:16px">Dr. Ali A. Ahmed</strong><br>
+  Dept. of Computer Science, Faculty of Science, Minia University<br>
+  بالتوفيق يا شباب 🌟 — المذاكرة بالتجربة بتثبت المعلومة أكتر.
+</footer>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+function setTabs(box,i){[...box.children].forEach((b,k)=>b.className='btn '+(k===i?'on':'alt'))}
+/* ---------- Lab 1: program vs process ---------- */
+(function(){
+  let procs=[],next=1204,run=0;
+  const list=$('#l1-list'),msg=$('#l1-msg');
+  function render(){
+    list.innerHTML=procs.length?procs.map((p,i)=>`<div class="pcard ${i===run?'run':''}"><div class="pt">Process #${i+1}</div><div>PID = <b>${p}</b></div><div>State: <b>${i===run?'Running':'Ready'}</b></div><div>🧠 ذاكرة مستقلة</div></div>`).join(''):'<div class="empty">لسه مفيش Process، دوس ▶ شغّل</div>';
+    msg.innerHTML=procs.length?`دلوقتي عندك <b>${procs.length}</b> Process من نفس الـ Program. كل واحدة ليها <b>PID مختلف</b> وذاكرة مستقلة. وعشان في CPU واحد، واحدة بس <b>Running</b> والباقي Ready.`:'الـ Program لسه مجرد ملف على الـ Disk، مفيش تنفيذ حصل.';
+  }
+  $('#l1-run').onclick=()=>{if(procs.length>=5){msg.textContent='كفاية 5 😄 دوس اقفل الكل.';return}procs.push(next++);render()};
+  $('#l1-rot').onclick=()=>{if(procs.length>1){run=(run+1)%procs.length;render()}};
+  $('#l1-clr').onclick=()=>{procs=[];run=0;render()};
+  render();
+})();
+
+/* ---------- Lab 2: memory ---------- */
+(function(){
+  const fn=['main()','foo()','bar()','baz()','qux()'];
+  let stack=1,heap=0;
+  const stk=$('#stk'),hp=$('#hp'),info=$('#m-info');
+  const INFO={
+    stack:'<b>Stack ⬇</b>: بيخزّن الـ local variables والـ parameters والـ return address. كل ما تنادي function بيتعمل <b>Stack Frame</b> جديد، ولما تخلص بيتشال (LIFO: آخر داخل أول خارج). لو اتملى (غالباً من recursion مالوش نهاية) بيحصل <b>Stack Overflow</b>.',
+    heap:'<b>Heap ⬆</b>: الذاكرة الديناميكية اللي بتحجزها وقت التشغيل بـ <code>malloc</code> أو <code>new</code>. حجمها بيتغير، وإنت المسؤول تحررها بـ <code>free</code>. لو نسيت = <b>Memory Leak</b>.',
+    data:'<b>Data</b>: فيها الـ <code>global</code> و <code>static</code> variables. حجمها بيتحدد وقت الـ compile وبتفضل طول عمر البرنامج.',
+    text:'<b>Text (Code)</b>: فيها الـ machine instructions بتاعة البرنامج. غالباً <b>read-only</b> عشان البرنامج ميعدّلش في نفسه بالغلط.'
+  };
+  function render(){
+    stk.innerHTML=fn.slice(0,stack).map(f=>`<div class="fr">${f} frame</div>`).join('');
+    hp.innerHTML=Array.from({length:heap},(_,i)=>`<div class="fr">block ${i+1} (100 B)</div>`).join('');
+  }
+  $('#m-call').onclick=()=>{if(stack>=5){info.innerHTML='💥 <b>Stack Overflow!</b> الـ Stack اتملى، ده بيحصل لما function تنادي نفسها بدون شرط توقف.';return}stack++;render();info.innerHTML=`اتعمل Stack Frame جديد لـ <code>${fn[stack-1]}</code> وبيكبر لتحت ⬇`};
+  $('#m-ret').onclick=()=>{if(stack<=1){info.textContent='main() هي آخر frame، لما تخلص البرنامج كله بيخلص.';return}stack--;render();info.innerHTML='الـ function رجعت (return) فاتشال الـ Stack Frame بتاعها أوتوماتيك ✅'};
+  $('#m-alloc').onclick=()=>{if(heap>=5){info.innerHTML='❌ مفيش ذاكرة كفاية (Out of memory). حرّر شوية بـ free().';return}heap++;render();info.innerHTML='حجزت block من الـ <b>Heap</b> وبيكبر لفوق ⬆. افتكر: لازم تعمل <code>free()</code>.'};
+  $('#m-free').onclick=()=>{if(!heap){info.textContent='مفيش حاجة تحررها.';return}heap--;render();info.innerHTML='حررت block بـ <code>free()</code> ✅'};
+  document.querySelectorAll('.reg').forEach(r=>{
+    const go=()=>{document.querySelectorAll('.reg').forEach(x=>x.classList.remove('sel'));r.classList.add('sel');info.innerHTML=INFO[r.dataset.r]};
+    r.onclick=go;r.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};
+  });
+  render();
+})();
+
+/* ---------- Lab 3: states ---------- */
+(function(){
+  const T=[
+    {id:'admit',label:'Admit ✅ (قبول)',from:'new',to:'ready'},
+    {id:'dispatch',label:'Dispatch 🎯 (اختيار للـ CPU)',from:'ready',to:'running'},
+    {id:'timeout',label:'Timeout ⏰ (خلص الوقت)',from:'running',to:'ready'},
+    {id:'iowait',label:'I/O request ⌨️ (طلب إدخال)',from:'running',to:'waiting'},
+    {id:'iodone',label:'I/O done ✔️ (خلص الإدخال)',from:'waiting',to:'ready'},
+    {id:'exit',label:'Exit 🏁 (إنهاء)',from:'running',to:'terminated'}
+  ];
+  const DESC={
+    new:'<b>New 🆕</b> — الـ Process لسه بتتعمل. <span class="muted">🍽️ العميل لسه داخل وبيتسجل طلبه.</span>',
+    ready:'<b>Ready ⏳</b> — جاهزة وفي الـ RAM وناقصها CPU بس. <span class="muted">🍽️ الطلب واقف في طابور الشيف.</span>',
+    running:'<b>Running ▶️</b> — بتتنفذ على الـ CPU دلوقتي. <span class="muted">🍽️ الشيف شغال على الطلب ده بالظبط.</span>',
+    waiting:'<b>Waiting ⌛</b> — مستنية حدث (I/O). <span class="muted">🍽️ الطلب واقف لحد ما المكوّن يوصل والشيف بيشتغل على طلب تاني.</span>',
+    terminated:'<b>Terminated 🏁</b> — خلصت وهتتنضف مواردها. <span class="muted">🍽️ الطلب اتسلّم.</span>'
+  };
+  const BAD={
+    'dispatch@waiting':'مينفعش! الـ Process الـ Waiting لازم ترجع <b>Ready</b> الأول. الـ Scheduler بيختار من الـ Ready queue بس.',
+    'iowait@ready':'مينفعش! الـ Process مش شغالة على الـ CPU فمش هتطلب I/O. الطلب بيحصل وهي <b>Running</b>.',
+    'iodone@running':'مينفعش! الـ I/O done بتحصل لـ Process كانت <b>Waiting</b>.',
+    'exit@ready':'مينفعش! الـ Process لازم تكون <b>Running</b> عشان تنفذ exit.',
+    'exit@waiting':'مينفعش! الـ Process لازم تكون <b>Running</b> عشان تنفذ exit.',
+    'timeout@ready':'مينفعش! الـ Timeout بيحصل للـ Process اللي <b>Running</b> لما وقتها يخلص.',
+    'timeout@waiting':'مينفعش! الـ Timeout بيحصل للـ Process اللي <b>Running</b> بس.'
+  };
+  const OK={
+    admit:'الـ OS قبل الـ Process: New → Ready.',
+    dispatch:'الـ Scheduler اختارها: Ready → Running 🎯 (الـ CPU بقى معاها).',
+    timeout:'خلص الـ time quantum (Timer Interrupt): Running → Ready. هترجع الطابور.',
+    iowait:'طلبت I/O: Running → Waiting. الـ CPU اتحرر لـ Process تانية.',
+    iodone:'الـ I/O خلص: Waiting → Ready (مش Running على طول!).',
+    exit:'خلصت: Running → Terminated 🏁'
+  };
+  let st,path;
+  const btns=$('#st-btns'),msg=$('#st-msg');
+  btns.innerHTML=T.map(t=>`<button class="btn alt" data-id="${t.id}">${t.label}</button>`).join('');
+  function paint(){
+    ['new','ready','running','waiting','terminated'].forEach(s=>$('#n-'+s).classList.toggle('on',s===st));
+    T.forEach(t=>{const e=$('#e-'+t.id),av=t.from===st;e.classList.toggle('av',av);e.setAttribute('marker-end',av?'url(#ahA)':'url(#ahM)')});
+    $('#st-desc').innerHTML=DESC[st];
+    $('#st-trail').innerHTML=path.map(p=>`<span>${p}</span>`).join('→');
+  }
+  function reset(){st='new';path=['New'];msg.textContent='اختار حدث من الأزرار 👆';paint()}
+  btns.onclick=e=>{
+    const b=e.target.closest('button');if(!b)return;
+    const t=T.find(x=>x.id===b.dataset.id);
+    if(st==='terminated'){msg.textContent='الـ Process خلصت! دوس "ابدأ من الأول".';return}
+    if(t.from===st){st=t.to;path.push(st[0].toUpperCase()+st.slice(1));msg.innerHTML='✅ '+OK[t.id];paint()}
+    else{msg.innerHTML='❌ '+(BAD[t.id+'@'+st]||`الحدث ده مينفعش وانت في حالة <b>${st}</b>.`);msg.classList.remove('shake');void msg.offsetWidth;msg.classList.add('shake')}
+  };
+  $('#st-reset').onclick=reset;
+  reset();
+})();
+
+/* ---------- Lab 4: PCB ---------- */
+(function(){
+  const F=[
+    ['Process ID (PID)','4021','رقم فريد لكل Process، زي رقم الطالب الجامعي. بيه الـ OS بيفرّق بين الـ Processes.'],
+    ['Process State','Ready','الحالة الحالية: New / Ready / Running / Waiting / Terminated.'],
+    ['Program Counter (PC)','0x004A2C','عنوان الـ instruction الجاية. لما الـ Process تتوقف الـ OS بيحفظه عشان تكمل من نفس المكان، زي علامة الصفحة 🔖 في الكتاب.'],
+    ['CPU Registers','R1=7, R2=0, SP=0x7FF0','قيم الـ registers وقت التوقف. لازم تتحفظ عشان الحسابات اللي في النص متضيعش.'],
+    ['CPU-Scheduling Info','Priority = 3','الأولوية ومؤشرات لطوابير الـ scheduling، وبيها الـ Scheduler يقرر مين الجاي.'],
+    ['Memory-Management Info','Base=0x4000, Limit=0x2000','بيقول الـ Process واخدة أنهي جزء من الـ RAM (base/limit أو page tables).'],
+    ['Accounting Info','CPU used = 12 ms','كام وقت CPU استهلكت، حدود الوقت، رقم الـ job.'],
+    ['I/O Status Info','Open files: 3','الملفات المفتوحة والأجهزة المخصصة للـ Process.']
+  ];
+  const box=$('#pcbt');
+  box.innerHTML='<div class="pcbh">PCB — Process P1</div>'+F.map((f,i)=>`<button class="pcbr" data-i="${i}"><span>${f[0]}</span><b>${f[1]}</b></button>`).join('');
+  box.onclick=e=>{const b=e.target.closest('.pcbr');if(!b)return;box.querySelectorAll('.pcbr').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');const f=F[+b.dataset.i];$('#pcb-info').innerHTML=`<b class="en">${f[0]}</b><br>${f[2]}`};
+})();
+
+/* ---------- Lab 5: context switch ---------- */
+(function(){
+  const S=[
+    {t:'P1 شغّال على الـ CPU. P2 مستني في الـ Ready queue، وحالته القديمة محفوظة في PCB2.',cpu:['P1',104,7],p1:['Running','—','—'],p2:['Ready',200,3],hl:[],ov:0},
+    {t:'① حصل Interrupt (مثلاً خلص الـ time quantum). الـ CPU وقّف P1 وسلّم الدفة للـ OS.',cpu:['OS (Kernel)',108,9],p1:['Running','—','—'],p2:['Ready',200,3],hl:['cpu'],ov:1},
+    {t:'② الـ OS بيحفظ حالة P1 (الـ PC والـ registers) جوه PCB1.',cpu:['OS (Kernel)',108,9],p1:['Ready',108,9],p2:['Ready',200,3],hl:['p1'],ov:1},
+    {t:'③ الـ Scheduler بيختار الـ Process الجاية: P2.',cpu:['OS (Kernel)',108,9],p1:['Ready',108,9],p2:['Selected',200,3],hl:['p2'],ov:1},
+    {t:'④ الـ OS بيحمّل حالة P2 من PCB2 على الـ CPU (PC=200, R1=3).',cpu:['P2',200,3],p1:['Ready',108,9],p2:['Running','—','—'],hl:['cpu'],ov:1},
+    {t:'⑤ P2 كمّل من نفس المكان اللي وقف عنده 🎉 ولما ييجي دور P1 هيرجع من PC=108 و R1=9، ومفيش حاجة ضاعت.',cpu:['P2',204,5],p1:['Ready',108,9],p2:['Running','—','—'],hl:[],ov:0}
+  ];
+  let i=0;
+  function box(h,t,a){return `<h4>${h}</h4>State: ${a[0]}<br>PC: ${a[1]}<br>R1: ${a[2]}`}
+  function render(){
+    const s=S[i];
+    $('#cs-p1').innerHTML=box('PCB1 (P1)','',s.p1);
+    $('#cs-p2').innerHTML=box('PCB2 (P2)','',s.p2);
+    $('#cs-cpu').innerHTML=`<h4>CPU</h4>Running: ${s.cpu[0]}<br>PC: ${s.cpu[1]}<br>R1: ${s.cpu[2]}`;
+    $('#cs-p1').classList.toggle('hl',s.hl.includes('p1'));
+    $('#cs-p2').classList.toggle('hl',s.hl.includes('p2'));
+    $('#cs-cpu').classList.toggle('hl',s.hl.includes('cpu'));
+    $('#cs-msg').textContent=s.t;
+    $('#cs-ovh').hidden=!s.ov;
+    $('#cs-dots').innerHTML=S.map((_,k)=>`<i class="${k<=i?'d':''}"></i>`).join('');
+    $('#cs-next').disabled=i===S.length-1;
+  }
+  $('#cs-next').onclick=()=>{if(i<S.length-1){i++;render()}};
+  $('#cs-reset').onclick=()=>{i=0;render()};
+  render();
+})();
+
+/* ---------- Lab 8: IPC ---------- */
+(function(){
+  const box=(x,y,w,h,t)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" style="fill:var(--card);stroke:var(--ink);stroke-width:2"/><text x="${x+w/2}" y="${y+h/2}" text-anchor="middle" dominant-baseline="central" style="fill:var(--ink);font-weight:700;font-size:14px;font-family:inherit">${t}</text>`;
+  const arr=(x1,y1,x2,y2,both)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f59e0b" stroke-width="3" marker-end="url(#ahA)" ${both?'marker-start="url(#ahA)"':''}/>`;
+  const V={
+    a:{svg:`<svg viewBox="0 0 360 160">${box(10,55,80,46,'P1')}${box(270,55,80,46,'P2')}<rect x="130" y="40" width="100" height="76" rx="10" style="fill:var(--brand-soft);stroke:var(--brand);stroke-width:2"/><text x="180" y="78" text-anchor="middle" dominant-baseline="central" style="fill:var(--ink);font-weight:700;font-size:13px;font-family:inherit">Shared Memory</text>${arr(92,78,128,78,1)}${arr(232,78,268,78,1)}<text class="el" x="180" y="146" text-anchor="middle">الـ Kernel بيجهّز المنطقة في الأول بس</text></svg>`,
+      info:'<b>Shared Memory:</b> الـ Processes بتتفق على منطقة ذاكرة مشتركة وتقرا وتكتب فيها مباشرة.<br>✅ <b>أسرع</b>: الـ Kernel مش بيتدخل في كل عملية.<br>⚠️ لازم تنسّق بينهم (Synchronization) عشان الاتنين ميكتبوش في نفس اللحظة.'},
+    b:{svg:`<svg viewBox="0 0 360 160">${box(10,55,80,46,'P1')}${box(270,55,80,46,'P2')}<rect x="130" y="30" width="100" height="96" rx="10" style="fill:var(--brand-soft);stroke:var(--brand);stroke-width:2"/><text x="180" y="62" text-anchor="middle" dominant-baseline="central" style="fill:var(--ink);font-weight:700;font-size:14px;font-family:inherit">Kernel</text><text x="180" y="92" text-anchor="middle" dominant-baseline="central" style="font-size:20px">📬</text>${arr(92,78,128,78)}${arr(232,78,268,78)}<text class="el" x="110" y="66" text-anchor="middle">send()</text><text class="el" x="250" y="66" text-anchor="middle">receive()</text></svg>`,
+      info:'<b>Message Passing:</b> الـ Processes بتبعت وتستقبل رسايل بـ <code>send()</code> و <code>receive()</code> عن طريق الـ Kernel.<br>✅ أسهل وأأمن، ومناسب للأنظمة الموزعة.<br>⚠️ أبطأ: كل رسالة محتاجة system call.'}
+  };
+  function show(k){$('#ipc-svg').innerHTML=V[k].svg;$('#ipc-info').innerHTML=V[k].info;$('#ipc-a').className='btn '+(k==='a'?'on':'alt');$('#ipc-b').className='btn '+(k==='b'?'on':'alt')}
+  $('#ipc-a').onclick=()=>show('a');$('#ipc-b').onclick=()=>show('b');show('a');
+})();
+
+/* ---------- Lab 8: Producer-Consumer (Print Spooler) ---------- */
+(function(){
+  const CAP=5,APPS={word:['Word','📝'],browser:['Browser','🌐'],pdf:['PDF reader','📕']};
+  let q,next,printing,done,waiting,lost,timer;
+  const msg=$('#pc-msg');
+  function reset(){
+    clearInterval(timer);
+    q=[{id:1,app:'word'},{id:2,app:'browser'},{id:3,app:'pdf'}];next=4;printing=null;done=[];waiting=[];lost=0;
+    $('#pc-auto').checked=false;$('#pc-sync').checked=true;
+    render('الـ Buffer فيه 3 Jobs (Job 1 و 2 و 3). جرّب تطبع من أي برنامج 👆');
+  }
+  function render(m){
+    $('#pc-prod').innerHTML=Object.keys(APPS).map(k=>{
+      const w=waiting.includes(k);
+      return `<button class="btn ${w?'alt':''}" data-app="${k}" ${w?'disabled':''}><span class="prodb">${APPS[k][1]} ${APPS[k][0]}<small>${w?'⏳ Waiting (Buffer full)':'Producer · Running'}</small></span></button>`;
+    }).join('');
+    $('#pc-slots').innerHTML=Array.from({length:CAP},(_,i)=>{
+      const j=q[i];
+      return j?`<div class="slot full ${i===0?'hd':''}" data-i="${i}"><div><b>Job ${j.id}</b><br>${APPS[j.app][0]}</div></div>`:`<div class="slot" data-i="${i}">فاضي</div>`;
+    }).join('');
+    $('#pc-count').textContent=q.length+'/'+CAP+(q.length===CAP?' (full)':q.length===0?' (empty)':'');
+    const pr=$('#pc-printer');pr.classList.toggle('busy',!!printing);
+    $('#pc-pst').innerHTML=printing?`بيطبع <b>Job ${printing.job.id}</b> (${APPS[printing.job.app][0]}) …`:'<span class="muted">Idle 💤 مستني Job</span>';
+    $('#pc-bar').style.width=(printing?printing.p:0)+'%';
+    $('#pc-take').disabled=false;
+    $('#pc-done').innerHTML=done.length?done.map(j=>`<span class="chip">Job ${j.id}</span>`).join(''):'<span class="muted">لسه مفيش</span>';
+    $('#pc-lost').textContent=lost;
+    if(m)msg.innerHTML=m;
+  }
+  function add(app){const j={id:next++,app};q.push(j);return j}
+  function fillFromWaiting(){
+    let t='';
+    while(waiting.length&&q.length<CAP){const k=waiting.shift(),j=add(k);t+=` ✅ ${APPS[k][0]} كان Waiting، دلوقتي اتفضى مكان فحط Job ${j.id} وكمّل (Waiting → Running).`}
+    return t;
+  }
+  function kick(){if($('#pc-auto').checked&&!printing&&q.length)start()}
+  function start(){
+    if(printing){render('الطابعة لسه بتطبع! استنى تخلص.');return}
+    if(!q.length){render('💤 الـ Buffer فاضي: الـ Consumer (الطابعة) لازم يستنى لحد ما Producer يحط Job.');return}
+    const job=q.shift();printing={job,p:0};
+    const t=fillFromWaiting();
+    render(`الطابعة سحبت Job ${job.id} من الأول (FIFO) وفضّت مكان في الـ Buffer.`+t);
+    clearInterval(timer);
+    timer=setInterval(()=>{
+      printing.p+=10;
+      if(printing.p>=100){clearInterval(timer);done.push(printing.job);const id=printing.job.id;printing=null;render(`✅ Job ${id} اتطبعت.`);kick()}
+      else $('#pc-bar').style.width=printing.p+'%';
+    },200);
+  }
+  $('#pc-prod').addEventListener('click',e=>{
+    const b=e.target.closest('button[data-app]');if(!b)return;
+    const k=b.dataset.app;
+    if(q.length>=CAP){waiting.push(k);render(`🛑 الـ Buffer full! ${APPS[k][0]} (الـ Producer) لازم يستنى ويبقى <b>Waiting</b> لحد ما الطابعة تسحب Job وتفضّي مكان.`);return}
+    const j=add(k);render(`${APPS[k][0]} حط <b>Job ${j.id}</b> في آخر الطابور.`);kick();
+  });
+  $('#pc-take').onclick=start;
+  $('#pc-auto').onchange=()=>{kick();if($('#pc-auto').checked&&!printing&&!q.length)render('الطابعة الأوتوماتيك شغّالة وهتسحب أول ما يتحط Job.')};
+  $('#pc-race').onclick=()=>{
+    if(CAP-q.length<2){render('محتاج مكانين فاضيين على الأقل. خلّي الطابعة تسحب Job الأول.');return}
+    if($('#pc-sync').checked){
+      const a=add('word'),b=add('browser');
+      render(`🔒 الـ Mutex شغّال: Word دخل الأول (<b>Job ${a.id}</b>) و Browser استنى لحظة وبعدين دخل (<b>Job ${b.id}</b>). الاتنين اتحفظوا ✅`);
+    }else{
+      const idx=q.length;add('word');q.pop();const b=add('browser');lost++;
+      render(`❌ <b>Race Condition!</b> Word و Browser قرأوا نفس مكان الكتابة وكتبوا في نفس الخانة، فـ Job بتاع Word اتمسح واتكتب مكانه Job ${b.id}. ضاعت Job من غير ما حد ياخد باله. الحل: شغّل الـ Synchronization وجرّب تاني.`);
+      const s=$('#pc-slots').children[idx];if(s){s.classList.add('flash')}
+    }
+    kick();
+  };
+  reset();
+})();
+
+
+/* ================= Lecture 1 labs ================= */
+
+/* A1 layers */
+(function(){
+  const L=[
+    ['user','USER(S)','People, machines, other computers','المستخدم: شخص أو جهاز أو كمبيوتر تاني بيطلب شغل. مبيشوفش تفاصيل الـ hardware.'],
+    ['app','APPLICATION PROGRAMS','Word, Browser, Games…','البرامج بتحدد إزاي الموارد تتستخدم لحل مشاكل المستخدم. هي اللي بتطلب خدمات من الـ OS.'],
+    ['os','OPERATING SYSTEM','Windows, macOS, Linux · Android, iOS','الـ OS بين البرامج والـ hardware: بيدير الموارد، وبيدّي وصول منظّم ومحمي. قلبه الـ Kernel.'],
+    ['hw','HARDWARE','CPU, Memory, I/O Devices','الموارد الفعلية: المعالج، الذاكرة، الأجهزة. الـ OS هو الوحيد اللي بيكلّمها مباشرة.']
+  ];
+  const box=$('#A-layers'),info=$('#A-linfo');
+  box.innerHTML=L.map((l,i)=>`<button class="ly ${l[0]}" data-i="${i}">${l[1]}<small>${l[2]}</small></button>`).join('');
+  const show=i=>{box.querySelectorAll('.ly').forEach((b,k)=>b.classList.toggle('sel',k===i));info.innerHTML='<b>'+L[i][1]+'</b><br>'+L[i][3]};
+  box.onclick=e=>{const b=e.target.closest('.ly');if(b)show(+b.dataset.i)};
+  const J=[[0,'👤 المستخدم دوس Ctrl+S.'],[1,'📝 Word بيطلب من الـ OS: "احفظ الملف ده" (System Call).'],[2,'🧠 الـ OS بيتأكد من الصلاحيات وبيكلّم الـ driver بتاع الـ Disk.'],[3,'💾 الـ disk controller بيكتب البيانات على الـ Disk.'],[2,'🧠 الـ OS بيستلم النتيجة (تم الحفظ).'],[1,'📝 Word بيعرض "Saved ✓".']];
+  let busy=false;
+  $('#A-journey').onclick=async()=>{
+    if(busy)return;busy=true;
+    for(const [i,t] of J){box.querySelectorAll('.ly').forEach((b,k)=>{b.classList.toggle('glow',k===i);b.classList.remove('sel')});info.innerHTML=t;await new Promise(r=>setTimeout(r,1100))}
+    box.querySelectorAll('.ly').forEach(b=>b.classList.remove('glow'));info.innerHTML='🏁 الطلب نزل للـ hardware ورجع تاني، والمستخدم مشافش أي تعقيد. ده شغل الـ OS.';busy=false;
+  };
+})();
+
+/* A2 device types */
+(function(){
+  const D=[
+    ['💻 PC / Laptop','الأهم: <b>سهولة الاستخدام</b> وأداء كويس. المستخدم مش فارق معاه استهلاك الموارد، والـ OS بيخفي تعقيد الـ hardware.<br>أمثلة: Windows, macOS, Linux.'],
+    ['📱 Mobile','الأهم: واجهة <b>لمس</b> وتعرّف على الصوت. التطبيقات بتشتغل في sandbox.<br>أمثلة: iOS, Android.'],
+    ['🔌 Embedded','بيشتغل <b>من غير تدخل المستخدم</b>. Real-time وموارده محدودة (مفيش UI غالباً).<br>أمثلة: FreeRTOS, Embedded Linux.'],
+    ['🖥️ Server','الأهم: <b>uptime و throughput</b> (يفضل شغال ويخدّم ناس كتير).<br>أمثلة: Ubuntu Server, Windows Server.']
+  ];
+  const box=$('#A-dev');box.innerHTML=D.map((d,i)=>`<button class="btn alt" data-i="${i}">${d[0]}</button>`).join('');
+  const show=i=>{setTabs(box,i);$('#A-devinfo').innerHTML=D[i][1]};
+  box.onclick=e=>{const b=e.target.closest('button');if(b)show(+b.dataset.i)};show(0);
+})();
+
+/* A3 hardware */
+(function(){
+  const H=[
+    ['CPU','بينفّذ الـ instructions. جواه registers و ALU و control unit، وبينسّق شغل باقي المكونات.'],
+    ['Main Memory (RAM)','تخزين <b>volatile</b> الـ CPU يوصله مباشرة. فيه البرامج والبيانات اللي بتتنفّذ دلوقتي.'],
+    ['Disk + Disk Controller','الـ Disk بيخزّن بشكل دائم، والـ controller بيدير شغله وعنده buffer محلي.'],
+    ['USB Controller','بيوصّل الماوس والكيبورد والطابعة بالنظام.'],
+    ['Graphics Adapter','بيوصّل الشاشة (Monitor) ويدير الصورة.'],
+    ['System Bus','المسار المشترك اللي بيوصل الـ CPU والذاكرة وكل الـ controllers ببعض.']
+  ];
+  const box=$('#A-hwchips');box.innerHTML=H.map((h,i)=>`<button class="btn alt" data-i="${i}">${h[0]}</button>`).join('');
+  box.onclick=e=>{const b=e.target.closest('button');if(!b)return;setTabs(box,+b.dataset.i);const h=H[+b.dataset.i];$('#A-hwinfo').innerHTML='<b class="en">'+h[0]+'</b><br>'+h[1]};
+})();
+
+/* A4 interrupts */
+(function(){
+  const E=[
+    {n:'⌨️ ضغطت زرار',k:1,type:'Hardware Interrupt',why:'جهاز (الكيبورد) هو اللي بعت الإشارة.'},
+    {n:'💾 الـ Disk خلّص قراءة',k:2,type:'Hardware Interrupt',why:'الـ disk controller بلّغ إن النقل خلص.'},
+    {n:'➗ قسمة على صفر',k:0,type:'Trap (Software) — Error',why:'خطأ جوه البرنامج نفسه.'},
+    {n:'📞 البرنامج نادى read()',k:3,type:'Trap (Software) — Request',why:'برنامج بيطلب خدمة من الـ OS (System Call).'}
+  ];
+  const V=[['0','divide_error_handler  0x1A00'],['1','keyboard_isr  0x2B40'],['2','disk_isr  0x3C80'],['3','syscall_handler  0x4D20']];
+  const box=$('#A-ev');box.innerHTML=E.map((e,i)=>`<button class="btn alt" data-i="${i}">${e.n}</button>`).join('');
+  let ev=-1,st=0;
+  const M=['','① حصل Interrupt: <b>TYPE</b>. <span class="muted">WHY</span>','② الـ CPU وقّف Word وحفظ حالته (PC = 2040) عشان يكمّل بعدين.','③ الـ CPU بيروح للـ Interrupt Vector ويقرا العنوان من الخانة <b>K</b> ← <b>ADDR</b>.','④ بيشغّل الـ ISR: <b>NAME</b>. لازم يخلص بسرعة.','⑤ الـ CPU رجّع حالة Word وكمّل من PC = 2040 بالظبط 🎉'];
+  function render(){
+    $('#A-idots').innerHTML=[1,2,3,4,5].map(k=>`<i class="${k<=st?'d':''}"></i>`).join('');
+    const e=E[ev];
+    const run=st===0?'Word (PC=2040)':st<4?(st===1?'Word (PC=2040)':'—'):st===4?'OS: '+V[e.k][1].split('  ')[0]:'Word (PC=2040)';
+    $('#A-icpu').innerHTML=`<h4>CPU</h4>Running: ${run}`;
+    $('#A-icpu').classList.toggle('hl',st>0&&st<5);
+    $('#A-isaved').innerHTML=`<h4>الحالة المحفوظة</h4>${st>=2&&st<5?'Word: PC=2040<br>registers saved ✔':'—'}`;
+    $('#A-vt').innerHTML=`<div class="r"><span>Interrupt Vector</span><span>Address</span></div>`+V.map((v,i)=>`<div class="r ${st>=3&&st<=4&&i===e.k?'hl':''}"><span>[${v[0]}]</span><span>${v[1]}</span></div>`).join('');
+    const a=V[e.k][1].split('  ');
+    $('#A-imsg').innerHTML=st?M[st].replace('TYPE',e.type).replace('WHY',e.why).replace('K',e.k).replace('ADDR',a[1]).replace('NAME',a[0]):'دوس "الخطوة اللي بعدها"';
+    $('#A-inext').disabled=st===5;
+  }
+  function pick(i){ev=i;st=0;setTabs(box,i);render()}
+  box.onclick=e=>{const b=e.target.closest('button');if(b)pick(+b.dataset.i)};
+  $('#A-inext').onclick=()=>{if(ev<0){$('#A-imsg').textContent='اختار حدث الأول 👆';return}if(st<5){st++;render()}};
+  $('#A-ireset').onclick=()=>{if(ev>=0){st=0;render()}};
+  $('#A-vt').innerHTML='<div class="r"><span>Interrupt Vector</span><span>Address</span></div>'+V.map(v=>`<div class="r"><span>[${v[0]}]</span><span>${v[1]}</span></div>`).join('');
+  $('#A-icpu').innerHTML='<h4>CPU</h4>Running: Word (PC=2040)';$('#A-isaved').innerHTML='<h4>الحالة المحفوظة</h4>—';
+})();
+
+/* A5 storage pyramid */
+(function(){
+  const S=[
+    ['Registers','< 1 ns','بضع مئات bytes','Volatile','Primary','#0f766e',38,100,6],
+    ['Cache','~ 1–10 ns','KB – MB','Volatile','Primary','#14907f',50,92,10],
+    ['Main Memory (RAM)','~ 100 ns','GBs','Volatile','Primary','#1b8f9c',62,80,24],
+    ['Nonvolatile Memory (SSD)','~ عشرات الميكروثواني','مئات GB – TB','Nonvolatile','Secondary','#2a7fb8',74,64,40],
+    ['Hard-Disk Drives','~ ملّي ثانية','TBs','Nonvolatile','Secondary','#3a6bc2',84,46,60],
+    ['Optical Disk','أبطأ من الـ HDD','GBs لكل أسطوانة','Nonvolatile','Tertiary','#5558c4',92,30,76],
+    ['Magnetic Tapes','ثواني (تسلسلي)','TB – PB للأرشفة','Nonvolatile','Tertiary','#6b46c1',100,14,92]
+  ];
+  const box=$('#A-pyr');
+  box.innerHTML=S.map((s,i)=>(i===3?'<div class="dash">⬆ volatile  •  nonvolatile ⬇</div>':'')+`<button class="pl" data-i="${i}" style="width:${s[6]}%;background:${s[5]}">${s[0]}</button>`).join('');
+  box.onclick=e=>{const b=e.target.closest('.pl');if(!b)return;box.querySelectorAll('.pl').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');const s=S[+b.dataset.i];
+    $('#A-pinfo').innerHTML=`<b class="en">${s[0]}</b> — <span class="en">${s[4]} storage</span><br>الزمن: <b>${s[1]}</b> • السعة: <b>${s[2]}</b> • <span class="en">${s[3]}</span><div class="mrow"><span>السرعة</span><div class="bar"><i class="blue" style="width:${s[7]}%"></i></div></div><div class="mrow"><span>السعة</span><div class="bar"><i class="cpu" style="width:${100-s[7]*0.8}%"></i></div></div><small class="muted">الأرقام تقريبية للتوضيح.</small>`};
+})();
+
+/* A6 DMA */
+(function(){
+  let mode=0,timer=null;
+  const p=$('#A-dp'),c=$('#A-dc'),n=$('#A-dn'),m=$('#A-dmsg');
+  function reset(){clearInterval(timer);timer=null;p.style.width='0';c.style.width='0';n.textContent='0';m.textContent=mode?'مع DMA: الـ CPU بيدّي أمر واحد وبعدين يكمّل شغله.':'بدون DMA: الـ CPU بيتدخل في نقل كل جزء صغير.'}
+  $('#A-d0').onclick=()=>{mode=0;setTabs($('#A-d0').parentElement,0);reset()};
+  $('#A-d1').onclick=()=>{mode=1;setTabs($('#A-d0').parentElement,1);reset()};
+  $('#A-dgo').onclick=()=>{
+    if(timer)return;reset();let t=0;const N=500;
+    timer=setInterval(()=>{
+      t+=2;p.style.width=t+'%';
+      if(mode===0){c.style.width='100%';n.textContent=Math.round(t/100*N)}
+      else{c.style.width=(t<4||t>=100?'100':'4')+'%';n.textContent=t>=100?1:0}
+      if(t>=100){clearInterval(timer);timer=null;
+        m.innerHTML=mode===0?'❌ الـ CPU فضل مشغول بالنقل طول الوقت وانقاطع <b>مئات المرات</b> (رقم توضيحي). مفيش شغل تاني اتعمل.':'✅ الـ DMA عمل النقل كله، والـ CPU اتقاطع <b>مرة واحدة بس</b> في النهاية وكان فاضي لباقي البرامج.'}
+    },60);
+  };
+  reset();
+})();
+
+/* A7 boot order */
+(function(){
+  const S=['Power on','Bootstrap program runs (stored in ROM)','Bootstrap initializes CPU registers, device controllers and memory, then loads the OS kernel','Kernel starts the first process: init','init waits for an event (interrupt) to occur'];
+  let next,order;
+  const pool=$('#A-bpool'),msg=$('#A-bmsg');
+  function shuf(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+  function build(){
+    next=0;order=shuf([0,1,2,3,4]);
+    pool.innerHTML=order.map(i=>`<button class="bstep" data-i="${i}">${S[i]}</button>`).join('');
+    msg.textContent='ابدأ بأول خطوة 👆';
+  }
+  pool.onclick=e=>{
+    const b=e.target.closest('.bstep');if(!b||b.classList.contains('done'))return;
+    const i=+b.dataset.i;
+    if(i===next){b.classList.add('done');b.textContent=(i+1)+'. '+S[i];next++;
+      msg.innerHTML=next===5?'🎉 ترتيب صح! والـ Bootstrap في الـ <b>ROM</b> لأنه لازم يفضل موجود بعد الـ power-off، عكس الـ RAM.':'✅ تمام، الخطوة اللي بعدها؟'}
+    else{msg.innerHTML='❌ الخطوة دي مش دلوقتي. فكّر: إيه اللي لازم يحصل <b>قبلها</b>؟';msg.classList.remove('shake');void msg.offsetWidth;msg.classList.add('shake')}
+  };
+  $('#A-breset').onclick=build;build();
+})();
+
+/* ================= Lecture 2 labs ================= */
+/* generic scenario matcher */
+function mountMatcher(el,items,opts){
+  let i=0,score=0,done=false;
+  function render(){
+    if(i>=items.length){el.innerHTML=`<div class="final">النتيجة: ${score} من ${items.length} ${score===items.length?'🌟 ممتاز':score>=items.length*0.6?'👍 كويس، راجع الغلط':'💪 راجع الجدول اللي فوق وجرّب تاني'}</div><div class="row"><button class="btn alt" data-r="1">↺ من الأول</button></div>`;return}
+    const x=items[i];done=false;
+    el.innerHTML=`<div class="muted" style="font-size:14px">سؤال ${i+1} من ${items.length}</div><div class="sm-card">${x.t}</div><div class="sm-opts">${opts.map((o,k)=>`<button class="btn alt" data-k="${k}">${o}</button>`).join('')}</div><div class="msg" hidden></div>`;
+  }
+  el.onclick=e=>{
+    if(e.target.closest('[data-r]')){i=0;score=0;render();return}
+    if(e.target.closest('[data-n]')){i++;render();return}
+    const b=e.target.closest('[data-k]');if(!b||done)return;done=true;
+    const k=+b.dataset.k,x=items[i],ok=k===x.a;
+    el.querySelectorAll('[data-k]').forEach(z=>{z.disabled=true;if(+z.dataset.k===x.a)z.classList.add('right')});
+    if(!ok)b.classList.add('wrong');else score++;
+    const m=el.querySelector('.msg');m.hidden=false;
+    m.innerHTML=(ok?'✅ صح. ':'❌ الصح: <b class="en">'+opts[x.a]+'</b>. ')+x.e+`<div class="row"><button class="btn" data-n="1">${i===items.length-1?'شوف النتيجة':'التالي ←'}</button></div>`;
+  };
+  render();
+}
+
+/* B1 timeline simulator */
+(function(){
+  function sim(policy){
+    const J=[0,1,2].map(i=>({i,ph:[['C',2],['I',3],['C',1]],p:0,rem:2,first:null,done:false}));
+    const cpu=[],io=[[],[],[]];let q=[],cur=null,t=0;
+    if(policy==='batch')q=[J[0]];else q=[...J];
+    let guard=0;
+    while(J.some(j=>!j.done)&&guard++<200){
+      if(cur===null&&q.length)cur=q.shift();
+      const ready=[];
+      cpu[t]=cur?cur.i:-1;
+      J.forEach(j=>io[j.i][t]=0);
+      let releaseNext=null,backCur=null,skip=null;
+      if(cur){
+        const j=cur;if(j.first===null)j.first=t;
+        j.rem--;
+        if(j.rem===0){j.p++;
+          if(j.p>=j.ph.length){j.done=true;if(policy==='batch'&&j.i<2)releaseNext=J[j.i+1]}
+          else{j.rem=j.ph[j.p][1]}
+          skip=j;cur=null;
+        }else if(policy==='ts'){backCur=j;cur=null}
+      }
+      J.forEach(j=>{
+        if(!j.done&&j!==cur&&j.p<j.ph.length&&j.ph[j.p][0]==='I'&&j!==skip&&!(j===backCur)){
+          io[j.i][t]=1;j.rem--;
+          if(j.rem===0){j.p++;j.rem=j.ph[j.p][1];ready.push(j)}
+        }
+      });
+      if(backCur)q.push(backCur);
+      ready.forEach(j=>q.push(j));
+      if(releaseNext)q.push(releaseNext);
+      t++;
+    }
+    const busy=cpu.filter(x=>x>=0).length;
+    return {cpu,io,total:t,busy,first:J.map(j=>j.first)};
+  }
+  const N=['Batch','Multiprogramming','Time-sharing'],K=['batch','multi','ts'];
+  const box=$('#B-sim');box.innerHTML=N.map((n,i)=>`<button class="btn alt" data-i="${i}">${n}</button>`).join('');
+  function show(i){
+    setTabs(box,i);const r=sim(K[i]);
+    const ax='<div class="tlrow"><b></b>'+Array.from({length:r.total},(_,k)=>`<span class="tc axis">${k%5===0?k:''}</span>`).join('')+'</div>';
+    const cpu='<div class="tlrow"><b>CPU</b>'+r.cpu.map(x=>x<0?'<span class="tc idle"></span>':`<span class="tc j${x}">J${x+1}</span>`).join('')+'</div>';
+    const ios=[0,1,2].map(j=>`<div class="tlrow"><b>I/O J${j+1}</b>`+r.io[j].map(x=>x?`<span class="tc io j${j}">I/O</span>`:'<span class="tc" style="opacity:.25"></span>').join('')+'</div>').join('');
+    $('#B-tl').innerHTML=ax+cpu+ios;
+    const u=Math.round(r.busy/r.total*100);
+    const txt=[
+     'الـ job بتشتغل لوحدها: لما بتدخل I/O الـ CPU بيقعد <b>فاضي</b> (الخانات المخطّطة). التالتة مبتبدأش غير بعد ما اللي قبلها تخلص.',
+     'لما job تدخل I/O الـ CPU بيروح لـ job تانية، فالفراغات بتقل جداً.',
+     'زي الـ multiprogramming لكن بيتقسّم الوقت لشرائح صغيرة، فكل job بتاخد CPU بسرعة وتحس إن النظام <b>بيرد عليها</b>.'][i];
+    $('#B-simi').innerHTML=`${txt}<br>الوقت الكلي: <b>${r.total}</b> وحدة • الـ CPU شغال: <b>${r.busy}</b> وحدة = <b>${u}%</b><br>أول مرة كل job تاخد CPU عند: <b class="en">J1=${r.first[0]}, J2=${r.first[1]}, J3=${r.first[2]}</b>`;
+  }
+  box.onclick=e=>{const b=e.target.closest('button');if(b)show(+b.dataset.i)};show(0);
+})();
+
+/* B2 system types matcher */
+mountMatcher($('#B-m1'),[
+ {t:'A bank processes millions of transactions overnight in groups. Nobody sits at a screen waiting.',a:0,e:'جمع jobs وتنفيذها من غير تفاعل = <b>Batch</b>.'},
+ {t:'Fifty students log into one big computer together and each gets quick replies to their commands.',a:1,e:'تبديل سريع + تفاعل online = <b>Time-sharing</b>.'},
+ {t:'You use Word and a browser on your own laptop. The machine serves only you.',a:2,e:'جهاز لمستخدم واحد = <b>Desktop</b>.'},
+ {t:'A server box has 4 CPUs that share one RAM and one clock.',a:3,e:'معالجات بتشارك الذاكرة والـ clock = <b>Multiprocessor</b> (tightly coupled).'},
+ {t:'Computers in Cairo, London and Delhi share work over a network. Each has its own memory.',a:4,e:'ذاكرة منفصلة + شبكة = <b>Distributed</b> (loosely coupled).'},
+ {t:'Two servers share one storage. One runs the service and the other waits as a backup.',a:5,e:'مشاركة storage مع واحد شغال والتاني احتياطي = <b>Clustered (Asymmetric)</b>.'},
+ {t:'A car airbag controller must react within a strict deadline. Late means disaster.',a:6,e:'فوات الـ deadline كارثة = <b>Hard real-time</b>.'},
+ {t:'A video call may drop a few frames sometimes. Response must be fast but not perfect.',a:7,e:'هبوط بسيط في الجودة مقبول = <b>Soft real-time</b>.'},
+ {t:'A small screen, little memory and a slow CPU compared with a PC.',a:8,e:'ده <b>Handheld</b> (موبايل / PDA).'},
+ {t:'The controller inside a washing machine: very limited OS features and no real user interface.',a:9,e:'ده <b>Embedded</b>.'}
+],['Batch','Time-sharing','Desktop','Multiprocessor','Distributed','Clustered','Hard real-time','Soft real-time','Handheld','Embedded']);
+
+/* B3 services matcher */
+mountMatcher($('#B-m2'),[
+ {t:'You open a file from your Documents folder.',a:0,e:'<b>File-system manipulation</b> خدمة للمستخدم.'},
+ {t:'Two programs send data to each other through a pipe.',a:0,e:'<b>Communications</b> بين الـ processes، للمستخدم.'},
+ {t:'The screen shows "Disk not ready" instead of crashing silently.',a:0,e:'<b>Error detection and reporting</b> للمستخدم.'},
+ {t:'You tap an icon and the app starts.',a:0,e:'<b>Program execution</b> (وكمان User interface)، للمستخدم.'},
+ {t:'The OS decides how much CPU time and memory each running program gets.',a:1,e:'<b>Resource allocation</b> لكفاءة النظام.'},
+ {t:'The OS records how much CPU each user has consumed.',a:1,e:'<b>Accounting</b> لتتبع استخدام الموارد.'},
+ {t:'One user is blocked from reading another user\'s private files.',a:1,e:'<b>Protection and security</b>.'},
+ {t:'The OS keeps a log of events to help find a bug later.',a:1,e:'<b>Logging</b> للـ debugging.'}
+],['للمستخدم 👤 (User-benefiting)','لكفاءة النظام ⚙️ (System-benefiting)']);
+
+/* B4 mode bit */
+(function(){
+  const pill=$('#B-pill'),msg=$('#B-smsg');let busy=false;
+  const S=['① User Program Request','② Trap ← Mode Switching','③ Validation','④ Execution (Kernel)','⑤ Return to User Mode'];
+  const dots=n=>$('#B-sdots').innerHTML=S.map((_,k)=>`<i class="${k<n?'d':''}"></i>`).join('');
+  const mode=m=>{pill.textContent=m==='user'?'USER MODE':'KERNEL MODE';pill.className='mpill '+m};
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  dots(0);
+  $('#B-b1').onclick=()=>{if(busy)return;mode('user');dots(0);msg.innerHTML='✅ جمع عادي، instruction مسموحة في <b>User mode</b> وبتتنفّذ علطول.'};
+  $('#B-b2').onclick=async()=>{
+    if(busy)return;busy=true;dots(0);mode('user');
+    msg.innerHTML='⛔ البرنامج حاول ينفّذ <b>privileged instruction</b> (I/O) وهو في User mode...';await wait(900);
+    mode('kernel');dots(2);msg.innerHTML='🚨 الـ hardware عمل <b>Trap</b> بدل ما ينفّذها، والـ OS (في Kernel mode) استلم الموقف.';
+    msg.classList.remove('shake');void msg.offsetWidth;msg.classList.add('shake');await wait(1500);
+    mode('user');dots(0);msg.innerHTML='الـ OS رفض الطلب (error أو إنهاء للبرنامج) ورجع الـ CPU لـ User mode. البرنامج مقدرش يلمس الـ hardware 🔒';busy=false;
+  };
+  $('#B-b3').onclick=async()=>{
+    if(busy)return;busy=true;mode('user');
+    const T=['البرنامج نادى <code>read()</code> (طلب منظّم).','حصل Trap والـ CPU اتحوّل لـ <b>Kernel mode</b>.','الـ Kernel بيتأكد إن الطلب سليم وإن مسموح للبرنامج.','الـ Kernel بينفّذ القراءة فعلاً (شغل privileged).','النتيجة رجعت والـ CPU رجع لـ <b>User mode</b>.'];
+    for(let k=0;k<5;k++){dots(k+1);mode(k>=1&&k<=3?'kernel':'user');msg.innerHTML=S[k]+'<br>'+T[k];await wait(1100)}
+    msg.innerHTML+='<br>✅ البرنامج خد الخدمة من غير ما ينفّذ privileged instruction بنفسه.';busy=false;
+  };
+})();
+ 
+/* B6 structures */
+(function(){
+  const S=[
+   ['Monolithic','كل الخدمات في address space واحد للـ kernel. <b>سريع</b> لأن الأجزاء بتنادي بعض مباشرة، لكن <b>صعب الصيانة</b> وbug واحد ممكن يوقّع النظام.<br>أمثلة: UNIX التقليدي، Linux.',[5,2,2]],
+   ['Layered','الطبقة N بتستخدم خدمات الطبقة N-1 بس. <b>سهل البناء والـ debugging</b> طبقة طبقة، لكن صعب تحديد الطبقات وفيه overhead لكل نداء.<br>مثال: نظام THE (Dijkstra).',[2,3,4]],
+   ['Microkernel','الأساسيات بس في الـ kernel (scheduling, memory, IPC)، والـ drivers والـ file systems <b>servers في user space</b>. أكثر موثوقية، لكن الـ message passing بيبطّأ.<br>أمثلة: Mach, QNX, MINIX.',[2,5,4]],
+   ['Loadable Modules','kernel صغير بيحمّل خدمات (drivers, file systems) وقت التشغيل. مرن زي الطبقات، ونداءات مباشرة زي الـ monolithic.<br>أمثلة: Linux, Solaris, FreeBSD.',[4,3,5]],
+   ['Hybrid','بيجمع تصاميم: core بأسلوب monolithic للسرعة + أجزاء microkernel أو modular للمرونة.<br>أمثلة: Windows NT, macOS و iOS (XNU).',[4,3,4]]
+  ];
+  const box=$('#B-st');box.innerHTML=S.map((s,i)=>`<button class="btn alt" data-i="${i}">${s[0]}</button>`).join('');
+  const show=i=>{setTabs(box,i);const s=S[i];$('#B-sti').innerHTML=s[1];
+    $('#B-stm').innerHTML=['السرعة','الموثوقية','المرونة / الصيانة'].map((n,k)=>`<div class="mrow"><span>${n}</span><div class="bar"><i class="${k===0?'cpu':'blue'}" style="width:${s[2][k]*20}%"></i></div></div>`).join('')+'<small class="muted">تقييم نسبي تقريبي للمقارنة فقط.</small>'};
+  box.onclick=e=>{const b=e.target.closest('button');if(b)show(+b.dataset.i)};show(0);
+})();
+
+/* B7 crash test */
+(function(){
+  const m=$('#B-cmsg');
+  $('#B-crash').onclick=()=>{
+    $('#B-d1').classList.add('dead');$('#B-c1').classList.add('down');
+    $('#B-d2').classList.add('dead');$('#B-c2').classList.add('up');
+    m.innerHTML='<b>Monolithic ❌:</b> الـ driver جوه الـ kernel فالنظام كله وقع (kernel panic / blue screen).<br><b>Microkernel ✅:</b> الـ driver مجرد server في user space، فبيتعمله restart والنظام شغال. (والتمن: message passing أبطأ).'};
+  $('#B-crreset').onclick=()=>{['B-d1','B-d2'].forEach(i=>$('#'+i).classList.remove('dead'));$('#B-c1').classList.remove('down');$('#B-c2').classList.remove('up');m.textContent='دوس على الزرار 👆'};
+})();
+
+/* ================= Lecture 1 questions ================= */
+const QS1=[
+ {q:"What is the main job of an operating system?",o:["To act as a go-between for the user and the computer hardware","To store all the files of the user","To make the CPU run faster by changing its clock","To write programs for the user"],a:0,
+  e:`الـ OS <b>وسيط</b> بين المستخدم والـ hardware، زي موظف الاستقبال في الفندق. تخزين الملفات حاجة من حاجات كتير بيعملها، وتغيير سرعة الـ CPU مش وظيفته الأساسية.`},
+ {q:"Which one is NOT a goal of an operating system?",o:["Make the computer easy to use","Use the hardware efficiently","Run user programs","Remove the need for hardware"],a:3,
+  e:`الأهداف: تنفيذ برامج المستخدم، سهولة الاستخدام، وكفاءة استخدام الـ hardware. الـ OS محتاج hardware يشتغل عليه، فمستحيل يلغيه.`},
+ {q:"You are using a laptop. As a user, what matters most to you?",o:["Ease of use and good performance","Tracking how much CPU every program used","How the memory chips are connected","Writing interrupt handlers"],a:0,
+  e:`ده الـ <b>User view</b>: المستخدم مهتم بالسهولة والأداء ومش فارق معاه استهلاك الموارد. النقط التانية بتهم النظام نفسه مش المستخدم.`},
+ {q:"From the system point of view, the OS is mainly a:",o:["Resource allocator","Text editor","Web server","Spreadsheet program"],a:0,
+  e:`الـ <b>System view</b>: الـ OS بيوزّع الـ CPU والذاكرة والـ storage والأجهزة بين البرامج، وكمان control program بيمنع الأخطاء.`},
+ {q:"Two programs ask for the printer at the same moment, and the OS decides who goes first. Which role is this?",o:["Resource allocator","User interface","Compiler","Device driver"],a:0,
+  e:`لما فيه طلبات متعارضة على نفس المورد، الـ OS بيحلها بكفاءة وعدل. ده بالظبط دور الـ <b>resource allocator</b>.`},
+ {q:"True or False: The kernel is loaded first when the computer starts, and it stays in RAM.",o:["True","False"],a:0,
+  e:`<b>True</b>. الـ Kernel أول حاجة بتتحمّل وبتفضل في الـ RAM طول الوقت وبتدير الـ CPU والذاكرة والأجهزة.`},
+ {q:"Why is RAM called volatile?",o:["It loses its contents when the power goes off","It is very fast","It can only be read, never written","It is cheaper than a disk"],a:0,
+  e:`<b>Volatile</b> يعني بتضيع محتوياتها لما الكهربا تقطع. السرعة حاجة تانية، والـ "read only" ده وصف الـ ROM.`},
+ {q:"What is a device controller?",o:["A small chip on a device that manages its low-level work and local buffer","The program that decides which process runs next","A part of the kernel stored in ROM","A cable that joins two computers"],a:0,
+  e:`الـ controller شريحة صغيرة متركّبة على الجهاز (disk, USB, graphics) بتدير شغله البسيط وعنده buffer محلي.`},
+ {q:"What does a device driver do?",o:["It lets the OS talk to one specific device controller","It stores the boot program","It moves data without the CPU","It chooses the next interrupt"],a:0,
+  e:`الـ driver <b>software</b> مترجم بين الـ OS والـ controller بتاع جهاز معيّن. اللي بينقل من غير CPU هو الـ DMA.`},
+ {q:"The disk controller is reading a big file. What can the CPU do in the meantime?",o:["Run other work until the controller sends an interrupt","Nothing, it must wait without doing anything","Shut itself down","Read the file byte by byte as well"],a:0,
+  e:`الـ controller بيشتغل لوحده، والـ CPU بيكمّل شغل تاني، ولما الـ controller يخلص بيبعت <b>interrupt</b>.`},
+ {q:"What is an interrupt?",o:["A signal that asks the CPU to stop and give attention to something","A key on the keyboard","A type of memory chip","A command typed by the user"],a:0,
+  e:`الـ Interrupt إشارة من hardware أو software للـ CPU بتطلب انتباه الـ OS دلوقتي.`},
+ {q:"Which one is a hardware interrupt?",o:["The disk controller finishes reading a file","A program divides by zero","A program calls open()","A program asks the OS for a service"],a:0,
+  e:`الـ hardware interrupt بييجي من <b>جهاز</b>. القسمة على صفر خطأ (trap)، والـ open() طلب خدمة (system call).`},
+ {q:"A program divides a number by zero. What is generated?",o:["A trap","A DMA transfer","A keyboard interrupt","A new bootstrap program"],a:0,
+  e:`الـ <b>Trap</b> هو software-generated interrupt بيحصل بسبب خطأ (زي القسمة على صفر) أو بسبب طلب من البرنامج للـ OS.`},
+ {q:"Where does the CPU find the address of the right interrupt service routine?",o:["In the interrupt vector","In the hard disk boot sector","In the cache of the printer","In the user's source code"],a:0,
+  e:`الـ <b>Interrupt Vector</b> جدول فيه عناوين كل الـ service routines، والـ CPU بيقرا العنوان منه مباشرة.`},
+ {q:"Why must the CPU save the state of the interrupted program?",o:["So the program can continue exactly where it stopped","So the program is deleted safely","So the disk can be formatted","So the RAM becomes non-volatile"],a:0,
+  e:`من غير حفظ الحالة (PC والـ registers) البرنامج مش هيعرف يكمّل من نفس المكان بعد ما الـ ISR يخلص.`},
+ {q:"Which is the correct order of interrupt handling?",o:["CPU interrupted, stops current process, jumps to fixed location, runs the ISR, resumes the process","CPU runs the ISR, is interrupted, stops the process, jumps, resumes","CPU resumes the process, stops it, runs the ISR, is interrupted","CPU jumps to a fixed location, is interrupted, resumes, runs the ISR"],a:0,
+  e:`الترتيب: interrupt ← وقف الـ process ← انتقال لمكان ثابت (من الـ vector) ← تنفيذ الـ ISR ← استئناف الـ process. شوف تجربة ٤.`},
+ {q:"Which storage is the fastest?",o:["Registers","Main memory","Hard disk","Magnetic tape"],a:0,
+  e:`الـ <b>Registers</b> في قمة الهرم: الأسرع والأصغر والأغلى.`},
+ {q:"Going down the storage pyramid from registers to tapes, what usually happens?",o:["Capacity gets bigger and speed gets slower","Capacity gets smaller and speed gets slower","Both capacity and speed get bigger","Nothing changes"],a:0,
+  e:`كل ما تنزل: السعة بتكبر، السرعة بتقل، والسعر لكل byte بيرخص.`},
+ {q:"Why does DMA help the system?",o:["It moves blocks of data between a device and memory without the CPU copying every piece","It makes RAM keep data after power off","It removes the need for device drivers","It lets user programs run in kernel mode"],a:0,
+  e:`الـ DMA controller بينقل الـ blocks بنفسه، والـ CPU بيدّي أمر واحد وبيستلم interrupt واحد في الآخر.`},
+ {q:"Why is the bootstrap program stored in ROM?",o:["It must survive power-off, and RAM loses its contents","ROM is faster than the cache","It is too big for RAM","Users need to edit it often"],a:0,
+  e:`الـ Bootstrap لازم يفضل موجود بعد ما الجهاز يتقفل. الـ ROM بتحتفظ بمحتواها، والـ RAM لأ.`},
+ {q:"A student says: DMA is useless if the CPU is fast enough. What is the best reply?",o:["Even a fast CPU wastes useful time if it must handle every small piece of a transfer, and DMA avoids that","He is right, DMA is only needed for slow CPUs","DMA is needed only to make the screen brighter","DMA makes the CPU slower on purpose"],a:0,h:1,
+  e:`حتى لو الـ CPU سريع، الوقت اللي بيضيعه في معالجة مئات الـ interrupts وفي النقل هو وقت ضايع كان ممكن يشتغل فيه برامج. الـ DMA بيوفره (تجربة ٦).`},
+ {q:"The OS spends most of its time waiting for events and reacts when they arrive. What do we call such an OS?",o:["Interrupt-driven","Batch-driven","Register-driven","ROM-driven"],a:0,h:1,
+  e:`الـ OS <b>interrupt-driven</b>: بيقعد مستني، وكل حدث (interrupt أو trap) بيشغّله. حتى الـ init بعد الـ boot بيستنى حدث.`},
+ {q:"At the end of booting, the kernel starts the first process. What is it and what does it do?",o:["init, which waits for an event (interrupt) to occur","bootstrap, which formats the disk","explorer, which draws icons only","cache, which stores registers"],a:0,h:1,
+  e:`بعد ما الـ bootstrap يحمّل الـ kernel، الـ kernel بيبدأ أول process اسمها <b>init</b>، وهي بتستنى حدث.`},
+ {q:"Which sentence compares a trap with a hardware interrupt correctly?",o:["A trap is generated by software (an error or a request), a hardware interrupt comes from a device","A trap comes only from the keyboard, a hardware interrupt comes from programs","They are the same thing","A trap never transfers control to the OS"],a:0,h:1,
+  e:`الـ <b>Trap</b> بيتولّد من software بسبب خطأ أو طلب (system call)، والـ <b>hardware interrupt</b> بييجي من جهاز. الاتنين بيودّوا التحكم للـ OS.`},
+ {q:"Why is looking up the handler in an interrupt vector better than examining the interrupt and searching for the right routine?",o:["The address is read directly from a table, so no searching is needed","It uses less disk space","It removes the need for the CPU","It makes interrupts impossible"],a:0,h:1,
+  e:`الـ vector جدول مؤشرات بنقرا منه العنوان مباشرة بالـ index، والـ generic mechanism لازم يفحص المعلومات الأول ويختار الروتين. وده مستخدم في UNIX و DOS.`}
+];
+const ES1=[
+ {q:"Q1. Define an operating system. Explain the user view and the system view with examples.",
+  a:`<p><b>التعريف:</b> الـ OS برنامج بيشتغل كوسيط بين المستخدم والـ hardware، وهو مدير الكمبيوتر. أهدافه: تنفيذ برامج المستخدم، سهولة الاستخدام، واستخدام الـ hardware بكفاءة.</p>
+  <ul><li><b>User view:</b> التركيز على سهولة الاستخدام والأداء (PC)، لمس وصوت (Mobile)، وتشغيل من غير تدخل (Embedded).</li><li><b>System view:</b> الـ OS هو <b>resource allocator</b> بيدير CPU وذاكرة وstorage وI/O ويحل الطلبات المتعارضة، وهو كمان <b>control program</b> بيمنع الأخطاء والاستخدام الغلط.</li></ul>
+  <div class="kw">كلمات مفتاحية: intermediary – goals – user view – system view – resource allocator – control program</div>`},
+ {q:"Q2. Describe the main hardware components of a computer system. What are a device controller and a device driver?",
+  a:`<ul><li><b>CPU:</b> بينفّذ التعليمات (registers, ALU, control unit).</li><li><b>Main memory (RAM):</b> volatile وبيحتفظ بالبرامج والبيانات الجارية.</li><li><b>I/O devices + controllers:</b> كل جهاز له controller وbuffer محلي.</li><li><b>System bus:</b> بيوصّل الكل ببعض.</li></ul>
+  <p><b>Device controller:</b> شريحة على الجهاز بتدير شغله. <b>Device driver:</b> software بيكلّم controller محدد.</p>
+  <p><b>رحلة I/O:</b> البرنامج يطلب من الـ OS، الـ OS يأمر الـ controller، الـ CPU يكمّل شغل تاني، والـ controller يبعت interrupt لما يخلص.</p>
+  <div class="kw">كلمات مفتاحية: CPU – RAM – controller – driver – bus – buffer – interrupt</div>`},
+ {q:"Q3. What is an interrupt? Explain the steps of interrupt handling and the role of the interrupt vector.",
+  a:`<p>الـ Interrupt إشارة من hardware أو software للـ CPU بتطلب انتباه الـ OS. نوعين: <b>Hardware</b> (من جهاز) و<b>Software/Trap</b> (خطأ أو system call).</p>
+  <ol><li>الـ CPU يتقاطع.</li><li>يوقّف الـ process الحالية ويحفظ حالتها.</li><li>ينتقل لمكان ثابت.</li><li>ينفّذ الـ interrupt service routine.</li><li>يستأنف الـ process.</li></ol>
+  <p><b>Interrupt vector:</b> جدول عناوين الـ ISRs بيسمح بالوصول المباشر للروتين من غير بحث (UNIX وDOS). ولازم الـ interrupt يتعالج بسرعة وتتحفظ حالة الـ process.</p>
+  <div class="kw">كلمات مفتاحية: signal – hardware vs trap – save state – ISR – interrupt vector – fast handling</div>`},
+ {q:"Q4. Draw and explain the storage-device hierarchy. Why do we need several levels?",
+  a:`<pre>Registers  <- primary, volatile (fastest, smallest)
+Cache
+Main memory
+-------------------------------------
+Nonvolatile memory (SSD) <- secondary
+Hard-disk drives
+-------------------------------------
+Optical disk             <- tertiary
+Magnetic tapes (slowest, largest)</pre>
+  <p>كل ما تنزل: السعة بتزيد والسرعة بتقل والتكلفة لكل byte بتقل. فوق الخط (Registers, Cache, RAM) <b>volatile</b>، وتحته nonvolatile.</p>
+  <p>محتاجين مستويات كتير لأن مفيش وسيط واحد سريع وكبير ورخيص، فبنوازن بين السرعة والسعة والتكلفة.</p>
+  <div class="kw">كلمات مفتاحية: speed vs capacity – cost – volatile – primary / secondary / tertiary</div>`},
+ {q:"Q5. Explain DMA and why it is needed. Then list the steps of the boot process.",
+  a:`<p><b>المشكلة:</b> مقاطعة الـ CPU لكل byte في نقل كبير بتضيّع وقت. <b>الحل:</b> DMA controller بينقل blocks بين الجهاز والذاكرة من غير الـ CPU. الـ CPU بيدّي أمر واحد (source, destination, length) وبيجيله <b>interrupt واحد</b> في النهاية فيفضل حر لشغل تاني.</p>
+  <p><b>Boot:</b></p>
+  <ol><li>Power on.</li><li>الـ Bootstrap بيشتغل (مخزّن في ROM).</li><li>بيجهّز الـ CPU registers والـ device controllers والذاكرة ثم يحمّل الـ kernel.</li><li>الـ kernel يبدأ أول process: init.</li><li>init يستنى حدث (interrupt).</li></ol>
+  <p>الـ Bootstrap في ROM لأنه لازم يفضل بعد انقطاع الكهربا.</p>
+  <div class="kw">كلمات مفتاحية: DMA controller – block transfer – one interrupt – bootstrap – ROM – kernel – init</div>`}
+];
+/* ================= Lecture 2 questions ================= */
+const QS2=[
+ {q:"What is the main idea of a batch system?",o:["Group similar jobs together to reduce setup time","Let many users type at the same time","Run one job on many computers","Finish every task within a strict deadline"],a:0,
+  e:`الـ Batch بيجمّع jobs متشابهة عشان يقلل وقت التجهيز، وبتتنفّذ في طابور من غير تفاعل مع المستخدم.`},
+ {q:"Why does a multiprogrammed system keep several jobs in memory?",o:["So the CPU can switch to another job when one waits for I/O","So each job runs faster by itself","So the user can type commands","So the disk is not needed"],a:0,
+  e:`لما job تستنى I/O الـ CPU مبيقعدش فاضي، بيروح لـ job تانية. الهدف: رفع الـ CPU utilization (جرّب تجربة ١).`},
+ {q:"What makes time-sharing different from simple multiprogramming?",o:["The CPU switches so fast that users can interact with their jobs online","It uses no memory","It runs only one job","It needs many CPUs"],a:0,
+  e:`الـ Time-sharing = تبديل سريع جداً بين jobs فالمستخدم يتفاعل online ويشوف رد فوري.`},
+ {q:"In a multiprocessor system, \"tightly coupled\" means that the processors:",o:["Share memory and a clock","Each have their own memory and talk by network","Work one after the other","Are in different countries"],a:0,
+  e:`<b>Tightly coupled</b> = بيشاركوا الذاكرة والـ clock. اللي ليه ذاكرة خاصة وبيتواصل بالشبكة ده الـ distributed (loosely coupled).`},
+ {q:"Which one is NOT an advantage of multiprocessor systems?",o:["Increased throughput","Lower cost than separate systems","Increased reliability (graceful degradation)","Processors do not share anything"],a:3,
+  e:`المزايا: throughput أعلى، اقتصادي، reliability. الـ multiprocessor <b>بيشارك</b> الذاكرة والـ clock، فعدم المشاركة مش ميزة ولا حقيقة فيه.`},
+ {q:"A distributed system is called loosely coupled because:",o:["Each processor has its own local memory and they communicate over a network","All processors share one clock","They all share one RAM","They sit on the same chip"],a:0,
+  e:`ذاكرة محلية لكل processor + تواصل بالشبكة أو الـ buses = <b>loosely coupled</b>.`},
+ {q:"In the client-server model:",o:["Clients send requests and a server responds","Every node is both client and server","There is no server","Only LAN is allowed"],a:0,
+  e:`الـ client-server: العميل يطلب والسيرفر يرد. أما كل node عميل وسيرفر فده الـ <b>peer-to-peer</b>.`},
+ {q:"Two servers share one storage. One runs the application and the other waits to take over. This is:",o:["Asymmetric clustering","Symmetric clustering","Batch processing","Peer-to-peer"],a:0,
+  e:`<b>Asymmetric clustering</b>: server واحد يشتغل والباقي standby كـ backup. في الـ symmetric كل الـ hosts بتشغّل التطبيق.`},
+ {q:"An airbag controller must inflate within a strict deadline. What kind of system is this?",o:["Hard real-time","Soft real-time","Batch","Desktop"],a:0,
+  e:`فوات الـ deadline كارثة، فهو <b>Hard real-time</b>. في الـ Soft الفوات بيأثر على الجودة بس.`},
+ {q:"Which of these is a good example of a soft real-time use?",o:["Video streaming or virtual reality","An airplane flight controller","A pacemaker","Anti-lock brakes"],a:0,
+  e:`الـ Soft real-time مفيد للـ multimedia والـ VR: محتاج رد سريع لكن لو اتأخر شوية الجودة بس بتقل. الباقي كوارث لو اتأخر.`},
+ {q:"Which is a main challenge of handheld systems?",o:["Limited memory, slower processors and small screens","Huge memory","Many CPUs","No users at all"],a:0,
+  e:`الموبايل والـ PDA: ذاكرة أقل، معالج أبطأ، وشاشة صغيرة بتحدّد تصميم الـ interface.`},
+ {q:"Which OS service is directly for the user?",o:["File-system manipulation","Accounting","Resource allocation","Logging"],a:0,
+  e:`File-system manipulation بتفيد المستخدم مباشرة. الـ Accounting والـ Allocation والـ Logging والـ Protection لكفاءة النظام.`},
+ {q:"Which feature lets the hardware know whether the CPU is running user code or OS code?",o:["The mode bit","The program counter","The ROM","The system bus"],a:0,
+  e:`الـ <b>mode bit</b> بيحدد User mode ولا Kernel mode، وبيه الـ OS بيحمي نفسه.`},
+ {q:"What happens if a program tries to run a privileged instruction in user mode?",o:["It causes a trap to the OS instead of executing","It runs normally","The computer reboots every time","The CPU quietly executes it"],a:0,
+  e:`الـ hardware بيعمل <b>Trap</b> للـ OS بدل التنفيذ (جرّب الزرار التاني في تجربة ٤).`},
+ {q:"What is a system call?",o:["The interface a process uses to request a service from the kernel","A phone call between two users","An interrupt sent by a disk","A library of games"],a:0,
+  e:`الـ System Call هو البوابة المنظّمة اللي البرنامج بيطلب منها خدمة من الـ kernel، وغالباً بيعمل trap للتحوّل لـ kernel mode.`},
+ {q:"In the layered approach, which layers can layer N use?",o:["Only layer N-1, the one below it","Any layer","Only the hardware","Only layer N+1"],a:0,
+  e:`الطبقة N بتستخدم خدمات الطبقة N-1 بس. ده بيسهّل الـ debugging لكن بيزوّد overhead لكل نداء.`},
+ {q:"Which services run as user-space servers in a microkernel?",o:["Device drivers and file systems","Basic IPC","Basic scheduling","Basic memory management"],a:0,
+  e:`في الـ microkernel بيفضل في الـ kernel الأساسيات (scheduling, memory, IPC)، والـ drivers والـ file systems servers في user space.`},
+ {q:"Which description fits loadable kernel modules?",o:["A small core kernel loads services such as drivers at run time","Everything is compiled into one huge block and never changes","They are used only in phones","All services talk only by messages"],a:0,
+  e:`kernel صغير بيحمّل الـ drivers وfile systems وقت التشغيل. أمثلة: Linux, Solaris, FreeBSD.`},
+ {q:"Windows NT and macOS (XNU) are examples of which structure?",o:["Hybrid","Pure layered","Pure microkernel","Batch"],a:0,
+  e:`الـ <b>Hybrid</b> بيجمع core بأسلوب monolithic للسرعة مع أجزاء microkernel أو modular للمرونة.`},
+ {q:"Three jobs each need CPU 2, then I/O 3, then CPU 1. Run one after another (batch), the total time is 18 units and the CPU works 9 of them. What is the CPU utilization?",o:["50%","90%","33%","100%"],a:0,h:1,
+  e:`9 ÷ 18 = <b>50%</b>. نص الوقت الـ CPU فاضي مستني I/O. شوف تجربة ١ على Batch.`},
+ {q:"The same three jobs are run with multiprogramming and finish in 10 units with 9 units of CPU work. What is the utilization?",o:["90%","50%","18%","100%"],a:0,h:1,
+  e:`9 ÷ 10 = <b>90%</b>. التبديل بين الـ jobs ملّى فراغات الـ I/O وخلّى الـ CPU أكثر انشغالاً.`},
+ {q:"A device driver crashes. Which design is most likely to keep the rest of the system alive?",o:["Microkernel","Monolithic kernel","Both would always crash","Neither has drivers"],a:0,h:1,
+  e:`في الـ microkernel الـ driver server في user space، فبيتعمله restart. في الـ monolithic الـ driver جوه الـ kernel فممكن يوقّع النظام كله (تجربة ٧).`},
+ {q:"Why do modern operating systems mix several structures instead of using one pure design?",o:["To balance speed, flexibility and reliability","Because pure designs cannot run any program","Because hardware forbids it","Only for marketing"],a:0,h:1,
+  e:`كل تصميم له مميزات وعيوب (سرعة، مرونة، موثوقية)، فالأنظمة الحديثة بتجمع أفكار منهم.`},
+ {q:"Why is time-sharing (with swapping jobs to disk) a poor fit for hard real-time systems?",o:["Swapping and switching make response time unpredictable, so deadlines can be missed","Time-sharing is too cheap","Hard real-time systems have unlimited disks","Time-sharing never switches jobs"],a:0,h:1,
+  e:`الـ Hard real-time محتاج توقيت مضمون. الـ swapping من وإلى الـ disk بيخلّي زمن الاستجابة غير متوقّع، ولهذا الـ hard real-time بيتجنّب secondary storage كبير ومش مدعوم في الـ general-purpose OS.`},
+ {q:"Which statement about system calls and the mode bit is correct?",o:["A system call lets a user program ask the kernel to do privileged work in a controlled way","A system call lets user programs run privileged instructions directly","Normal applications run in kernel mode","A system call skips validation"],a:0,h:1,
+  e:`البرنامج مبينفّذش privileged instruction بنفسه، بيطلبها بـ system call فالـ kernel يتأكد (validation) وينفّذ وبعدين يرجع لـ user mode.`}
+];
+const ES2=[
+ {q:"Q1. Compare batch, multiprogrammed and time-sharing systems.",
+  a:`<div class="tw"><table class="tbl"><tr><th>المعيار</th><th>Batch</th><th>Multiprogramming</th><th>Time-sharing</th></tr>
+  <tr><td>الفكرة</td><td>تجميع jobs متشابهة</td><td>عدة jobs في الذاكرة والـ CPU يتبدّل</td><td>الـ CPU يتبدّل بسرعة بين jobs في الذاكرة والـ disk</td></tr>
+  <tr><td>التفاعل</td><td>لا يوجد</td><td>محدود</td><td>online وتفاعل مباشر</td></tr>
+  <tr><td>الهدف</td><td>تقليل وقت التجهيز</td><td>رفع CPU utilization</td><td>سرعة استجابة للمستخدم</td></tr>
+  <tr><td>ملاحظات</td><td>Automatic job sequencing، أول OS بدائي</td><td>التبديل لما job تستنى I/O</td><td>Swap in/out بين RAM والـ disk</td></tr></table></div>
+  <div class="kw">كلمات مفتاحية: job sequencing – setup time – I/O wait – utilization – online – swapping</div>`},
+ {q:"Q2. Compare multiprocessor, distributed and clustered systems. Mention the coupling and the advantages.",
+  a:`<ul><li><b>Multiprocessor:</b> أكتر من CPU بيشاركوا الذاكرة والـ clock (<b>tightly coupled</b>). مزاياه: throughput أعلى، اقتصادي، reliability (graceful degradation).</li><li><b>Distributed:</b> كل processor ذاكرته المحلية ويتواصلوا بشبكة (<b>loosely coupled</b>). مزاياه: resource sharing، computation speed-up، reliability. نماذجه: client-server وpeer-to-peer، وشبكات LAN وWAN.</li><li><b>Clustered:</b> جهازين أو أكتر بيشاركوا storage لخدمات عالية الموثوقية. <b>Asymmetric:</b> واحد يشتغل والباقي backup. <b>Symmetric:</b> كلهم يشغّلوا التطبيق.</li></ul>
+  <div class="kw">كلمات مفتاحية: tightly vs loosely coupled – shared memory – network – shared storage – asymmetric / symmetric</div>`},
+ {q:"Q3. What is a real-time system? Differentiate between hard and soft real-time with examples.",
+  a:`<p><b>Real-time system:</b> نظام تحكم لتطبيقات مخصصة وليه قيود زمنية محددة، والمهمة لازم تخلص قبل deadline.</p>
+  <div class="tw"><table class="tbl"><tr><th>المعيار</th><th>Hard</th><th>Soft</th></tr>
+  <tr><td>لو فات الـ deadline</td><td>كارثة</td><td>جودة أقل</td></tr>
+  <tr><td>Storage</td><td>محدود أو معدوم، البيانات في ROM أو ذاكرة قصيرة</td><td>ممكن يتكامل مع time-sharing</td></tr>
+  <tr><td>الدعم</td><td>غير مدعوم في general-purpose OS</td><td>مفيد للـ multimedia والـ VR</td></tr>
+  <tr><td>مثال</td><td>airbag، تحكم في طائرة</td><td>video streaming، VR</td></tr></table></div>
+  <div class="kw">كلمات مفتاحية: deadline – catastrophic vs minor drop – ROM – time-sharing conflict – multimedia</div>`},
+ {q:"Q4. Explain dual-mode operation and describe how a system call works. Why is it needed?",
+  a:`<p>الـ hardware فيه <b>mode bit</b>: برامج المستخدم في <b>user mode</b>، والـ privileged instructions (I/O، التحكم في interrupts، تغيير الـ mode) مسموحة في <b>kernel mode</b> بس. لو برنامج حاول ينفّذ privileged instruction في user mode بيحصل trap للـ OS.</p>
+  <p><b>خطوات الـ system call:</b></p>
+  <ol><li>البرنامج يطلب خدمة (مثلاً read()).</li><li>Trap وتحوّل لـ kernel mode.</li><li>الـ kernel يعمل validation للطلب.</li><li>ينفّذ الخدمة.</li><li>الرجوع لـ user mode.</li></ol>
+  <p><b>الحاجة ليه:</b> حماية الـ OS والـ hardware من البرامج الغلطانة وإعطاء البرامج بوابة منظمة للخدمات.</p>
+  <div class="kw">كلمات مفتاحية: mode bit – privileged – trap – validation – kernel mode – protection</div>`},
+ {q:"Q5. Compare monolithic, layered, microkernel, loadable-module and hybrid structures with examples.",
+  a:`<div class="tw"><table class="tbl"><tr><th>التصميم</th><th>الفكرة</th><th>الميزة</th><th>العيب</th><th>مثال</th></tr>
+  <tr><td>Monolithic</td><td>كل الخدمات في kernel واحد</td><td>سريع</td><td>صعب الصيانة، bug يوقّع النظام</td><td>UNIX, Linux</td></tr>
+  <tr><td>Layered</td><td>طبقة N تستخدم N-1</td><td>سهل البناء والـ debugging</td><td>صعب تحديد الطبقات، overhead</td><td>THE</td></tr>
+  <tr><td>Microkernel</td><td>الأساسيات في الـ kernel والباقي user-space servers</td><td>موثوق</td><td>message passing أبطأ</td><td>Mach, QNX, MINIX</td></tr>
+  <tr><td>Loadable modules</td><td>core صغير يحمّل خدمات وقت التشغيل</td><td>مرن ونداءات مباشرة</td><td>—</td><td>Linux, Solaris, FreeBSD</td></tr>
+  <tr><td>Hybrid</td><td>مزيج من التصاميم</td><td>توازن سرعة ومرونة</td><td>أعقد</td><td>Windows NT, macOS/iOS (XNU)</td></tr></table></div>
+  <div class="kw">كلمات مفتاحية: performance vs safety – address space – N-1 – user-space servers – run-time loading – hybrid</div>`}
+];
+
+const QS3=[
+ {q:'What is a process?',o:['A program stored on the hard disk','A program in execution','A file that contains source code','A hardware component inside the CPU'],a:1,
+  e:'الـ Process = برنامج <b>بيتنفّذ فعلاً</b> (Program in execution). البرنامج المخزّن على الـ Disk ده اسمه Program وهو ساكن، وملف الـ source code مجرد ملف، والـ Process مش hardware.'},
+ {q:'Which statement correctly compares a program and a process?',o:['A program is active, a process is passive','A program is passive, a process is active','Both are active entities','Both exist only on the disk'],a:1,
+  e:'الـ Program <b>ساكن (passive)</b> على الـ Disk، لكن الـ Process <b>نشط (active)</b> وليه PC و registers وحالة وذاكرة. عشان كده من Program واحد ممكن تعمل Processes كتير.'},
+ {q:'Which part of a process\'s memory stores local variables and function return addresses?',o:['Heap','Text','Stack','Data'],a:2,
+  e:'الـ <b>Stack</b> بيخزّن الـ local variables والـ parameters والـ return address لكل function. الـ Heap للـ dynamic memory، والـ Text للكود، والـ Data للـ global variables.'},
+ {q:'Memory allocated at run time using <code>malloc()</code> or <code>new</code> comes from the:',o:['Heap','Stack','Text section','CPU registers'],a:0,
+  e:'الـ <code>malloc()</code> و <code>new</code> بيحجزوا من الـ <b>Heap</b> وقت التشغيل، وإنت المسؤول تحررها بـ free/delete. الـ Stack بيتعامل مع الـ local variables أوتوماتيك.'},
+ {q:'The Text section of a process contains:',o:['Global variables','Local variables','The executable code (instructions)','Dynamically allocated memory'],a:2,
+  e:'الـ Text section فيها <b>الكود التنفيذي (machine instructions)</b> وغالباً read-only. الـ global variables في Data، والـ dynamic memory في Heap، والـ local في Stack.'},
+ {q:'Where are global and static variables stored?',o:['Stack','Data section','Heap','PCB'],a:1,
+  e:'الـ global و static variables بتتخزن في الـ <b>Data section</b>. الـ PCB ده جدول بتاع الـ OS مش جزء من memory layout بتاع البرنامج.'},
+ {q:'Which of the following is NOT a state in the five-state process model?',o:['Ready','Running','Waiting','Compiling'],a:3,
+  e:'الحالات الخمسة: New, Ready, Running, Waiting, Terminated. الـ <b>Compiling</b> مرحلة بتحصل قبل ما البرنامج يبقى Process أصلاً.'},
+ {q:'A process is waiting for the user to type on the keyboard. Its state is:',o:['Running','Ready','Waiting (Blocked)','Terminated'],a:2,
+  e:'الـ Process مستنية حدث خارجي (إدخال) فهي <b>Waiting (Blocked)</b>. لو Running كانت على الـ CPU، ولو Ready كانت جاهزة وناقصها الـ CPU بس، وهنا هي مش جاهزة لأنها مستنية الـ I/O.'},
+ {q:'A process in the Ready state is:',o:['Currently executing on the CPU','In memory, waiting to be assigned to the CPU','Waiting for an I/O operation to finish','Finished its execution'],a:1,
+  e:'Ready يعني الـ Process جاهزة في الـ RAM و<b>ناقصها الـ CPU بس</b>. اللي بتتنفذ حالياً Running، واللي مستنية I/O هي Waiting، واللي خلصت Terminated.'},
+ {q:'A Running process is moved back to Ready when:',o:['It requests an I/O operation','Its time slice expires (timer interrupt)','It finishes execution','It is created'],a:1,
+  e:'لما الـ time quantum يخلص بيحصل <b>Timer interrupt</b> والـ OS بيرجّع الـ Process لـ Ready عشان غيرها ياخد دور. طلب الـ I/O بيودّيها Waiting، والـ exit بيودّيها Terminated.'},
+ {q:'A Waiting process moves to which state when its I/O completes?',o:['Running','Ready','Terminated','New'],a:1,
+  e:'بعد ما الـ I/O يخلص بتروح <b>Ready</b> (مش Running على طول)، وبعدين الـ Scheduler هو اللي يدّيها الـ CPU لما يجي دورها.'},
+ {q:'Can a process move directly from Waiting to Running?',o:['Yes, as soon as the I/O finishes','Yes, if it has the highest priority','No, it must go to Ready first','No, it must be terminated first'],a:2,
+  e:'<b>لأ</b>. أي Process خارجة من Waiting لازم تدخل الـ Ready queue الأول، والـ Scheduler هو اللي يختار مين ياخد الـ CPU. مفيش سهم Waiting → Running في الرسمة.'},
+ {q:'PCB stands for:',o:['Program Counter Block','Process Control Block','Processor Control Bus','Primary Core Buffer'],a:1,
+  e:'PCB = <b>Process Control Block</b>، ملف الـ Process اللي فيه كل معلومات الـ OS عنها.'},
+ {q:'Which of the following is NOT stored in the PCB?',o:['Process ID (PID)','Values of CPU registers','The Program Counter','The full source code typed by the programmer'],a:3,
+  e:'الـ PCB فيها معلومات <b>إدارة</b> الـ Process (PID, State, PC, registers…) لكن مش بتخزن كود البرنامج نفسه، ده مكانه الـ Text section.'},
+ {q:'The Program Counter (PC) holds:',o:['The number of instructions in the program','The address of the next instruction to execute','The process ID','The size of the stack'],a:1,
+  e:'الـ PC فيه <b>عنوان الـ instruction الجاية</b>. زي علامة الصفحة في الكتاب: لما الـ Process تتوقف وترجع تكمل، نعرف منين نبدأ.'},
+ {q:'What is a context switch?',o:['Copying a program from disk to RAM','Saving the state of the current process and loading the state of another process','Changing the CPU clock speed','Creating a brand-new process'],a:1,
+  e:'Context switch = <b>حفظ حالة الـ Process الحالية (في الـ PCB) وتحميل حالة Process تانية</b> على الـ CPU. نسخ البرنامج من الـ Disk ده loading، وإنشاء Process جديدة حاجة تانية خالص.'},
+ {q:'Context-switch time is considered:',o:['Useful work done for the user','Pure overhead','Time spent on I/O','The burst time of a process'],a:1,
+  e:'وقت الـ context switch <b>Overhead</b>: الـ CPU بيكون مشغول بحفظ وتحميل بدل ما يشتغل في برنامج مفيد. عشان كده Quantum صغير أوي = Switches كتير = أداء أسوأ.'},
+ {q:'On a single-core CPU, how many processes can be in the Running state at the same moment?',o:['At most one','Two','As many as are in memory','Exactly three'],a:0,
+  e:'الـ core الواحد بيشغّل <b>Process واحدة بس</b> في اللحظة (أو ولا واحدة لو idle). التبديل السريع بينهم هو اللي بيدّي إحساس إنهم شغالين مع بعض.'},
+ {q:'Which scheduler selects a process from the Ready queue and gives it the CPU?',o:['Long-term scheduler','Medium-term scheduler','Short-term (CPU) scheduler','Disk scheduler'],a:2,
+  e:'الـ <b>Short-term (CPU) scheduler</b> بيختار من الـ Ready queue ويدّي الـ CPU، وبيشتغل كتير جداً. الـ Long-term بيدخّل Jobs للـ Memory.'},
+ {q:'The long-term scheduler controls:',o:['Which process runs next on the CPU','The degree of multiprogramming','The speed of context switching','Page replacement'],a:1,
+  e:'الـ Long-term (Job scheduler) بيقرر <b>مين يدخل الـ Memory</b>، فبيتحكم في عدد الـ Processes الموجودة فيها = degree of multiprogramming.'},
+ {q:'A CPU-bound process is one that:',o:['Spends most of its time doing I/O','Spends most of its time doing computations on the CPU','Never uses the CPU','Always has the highest priority'],a:1,
+  e:'الـ CPU-bound بتقضي معظم وقتها في <b>حسابات على الـ CPU</b> (زي معالجة فيديو). عكسها I/O-bound بتقضي معظم وقتها مستنية I/O.'},
+ {q:'Which are the two fundamental models of Inter-Process Communication (IPC)?',o:['Stack and Heap','Shared Memory and Message Passing','Fork and Exec','Ready and Waiting'],a:1,
+  e:'الـ IPC بيتم بطريقتين: <b>Shared Memory</b> (منطقة ذاكرة مشتركة) و<b>Message Passing</b> (send/receive عن طريق الـ Kernel).'},
+ {q:'True or False: Two processes created from the same program have the same PID.',o:['True','False'],a:1,
+  e:'<b>False</b>. كل Process ليها <b>PID فريد</b> حتى لو من نفس البرنامج. زي تجربة ١: Chrome مفتوح كذا مرة = PIDs مختلفة.'},
+ {q:'True or False: Each process has its own separate address space.',o:['True','False'],a:0,
+  e:'<b>True</b>. كل Process ليها address space مستقل (Text, Data, Heap, Stack) والـ OS بيحمي كل واحدة من التانية، وعشان كده محتاجين IPC للتواصل.'},
+ {q:'During a context switch, the CPU state (PC and registers) of the old process is saved in:',o:['Its PCB','The hard disk boot sector','The Text section of the new process','Nowhere; it is discarded'],a:0,
+  e:'الحالة بتتحفظ في الـ <b>PCB</b> بتاع الـ Process القديمة، وبتتحمّل منه لما ييجي دورها تاني. لو اتمسحت الـ Process مش هتعرف تكمل من مكانها.'}
+];
+const ES3=[
+ {q:'Q1. Define a process. What is the difference between a program and a process? Give an example.',
+  a:`<p><b>التعريف:</b> الـ Process هو <b>برنامج أثناء التنفيذ (Program in execution)</b>، وبيشمل: الكود (Text)، الـ Data، الـ Heap، الـ Stack، بالإضافة للـ Program Counter وقيم الـ registers.</p>
+  <p><b>الفرق:</b></p><ul><li>الـ Program كيان <b>passive</b> (ملف على الـ Disk)، والـ Process كيان <b>active</b> (في الـ RAM وليه state و PC).</li><li>الـ Program ثابت، والـ Process ديناميكي بيتغير مع التنفيذ.</li><li>الـ Process بتستهلك موارد (CPU, memory, files, I/O) والـ Program لأ.</li><li>من Program واحد ممكن تطلع Processes كتير، كل واحدة ليها PID مختلف.</li></ul>
+  <p><b>مثال:</b> الملف chrome.exe = Program. لما تفتحه 3 مرات يبقى عندك 3 Processes.</p>
+  <div class="kw">كلمات مفتاحية: program in execution – passive vs active – disk vs memory – PID – مثال</div>`},
+ {q:'Q2. Draw and explain the five-state process model.',
+  a:`<pre>New --admitted--> Ready --dispatch--> Running --exit--> Terminated
+                    ^                   |  |
+                    |---- interrupt ----|  |
+                    |                      | I/O or event wait
+                    |---- I/O done ---- Waiting &lt;--</pre>
+  <ul><li><b>New:</b> الـ Process بتتعمل.</li><li><b>Ready:</b> جاهزة في الـ Memory ومستنية الـ CPU.</li><li><b>Running:</b> بتتنفذ على الـ CPU.</li><li><b>Waiting:</b> مستنية I/O أو حدث.</li><li><b>Terminated:</b> خلصت.</li></ul>
+  <p><b>الانتقالات:</b> New → Ready (admitted) • Ready → Running (scheduler dispatch) • Running → Ready (interrupt / انتهاء الـ quantum) • Running → Waiting (طلب I/O) • Waiting → Ready (انتهاء I/O) • Running → Terminated (exit).</p>
+  <div class="kw">كلمات مفتاحية: 5 states – dispatch – interrupt – I/O wait – I/O completion – Waiting يرجع Ready مش Running</div>`},
+ {q:'Q3. What is a PCB? List five fields stored in it and explain why the OS needs it.',
+  a:`<p><b>PCB (Process Control Block)</b> هي هيكل بيانات بيحتفظ بيه الـ OS لكل Process، وفيه كل المعلومات اللازمة لإدارتها.</p>
+  <p><b>أهم الحقول:</b></p><ul><li>Process ID (PID)</li><li>Process State</li><li>Program Counter</li><li>CPU Registers</li><li>CPU-scheduling info (priority)</li><li>Memory-management info</li><li>Accounting info و I/O status info</li></ul>
+  <p><b>ليه الـ OS محتاجها؟</b> عشان لما يوقف Process (Context Switch) يحفظ حالتها في الـ PCB، ولما يرجّعها يحمّل حالتها منها فتكمل من نفس المكان. كمان بيستخدمها الـ Scheduler في اتخاذ القرارات.</p>
+  <div class="kw">كلمات مفتاحية: data structure – PID – state – PC – registers – save/restore – context switch</div>`},
+ {q:'Q4. Explain the steps of a context switch. Why is it considered overhead?',
+  a:`<ol><li>حصول <b>Interrupt</b> أو system call فيتحول التحكم للـ OS.</li><li><b>Save:</b> حفظ حالة الـ Process الحالية (PC + registers + state) في الـ PCB بتاعها.</li><li><b>Select:</b> الـ Scheduler بيختار الـ Process الجاية من الـ Ready queue.</li><li><b>Load:</b> تحميل حالة الـ Process الجديدة من الـ PCB بتاعها على الـ CPU.</li><li>الـ Process الجديدة بتكمل من آخر نقطة وقفت عندها.</li></ol>
+  <p><b>ليه Overhead؟</b> لأن الـ CPU بيقضي وقت في الحفظ والتحميل وماحدش بيشتغل في برنامج مفيد خلال الوقت ده. كل ما زادت الـ switches قلّ الشغل المفيد.</p>
+  <div class="kw">كلمات مفتاحية: interrupt – save state – PCB – scheduler – load state – overhead / no useful work</div>`},
+ {q:'Q5. Describe the memory layout of a process.',
+  a:`<p>الـ Process في الـ Memory بتتقسم لأربعة أجزاء (من الأسفل للأعلى):</p>
+  <ul><li><b>Text:</b> الكود التنفيذي (instructions)، ثابت وغالباً read-only.</li><li><b>Data:</b> الـ global و static variables.</li><li><b>Heap:</b> الذاكرة الديناميكية (malloc/new)، بتكبر لفوق.</li><li><b>Stack:</b> الـ local variables والـ parameters والـ return addresses، بتكبر لتحت وبتشتغل LIFO.</li></ul>
+  <p>بين الـ Heap والـ Stack في مساحة فاضية، ولو اتقابلوا بيحصل خطأ (Stack Overflow / Out of memory).</p>
+  <div class="kw">كلمات مفتاحية: Text – Data – Heap – Stack – dynamic – local vs global – grows up/down</div>`},
+ {q:'Q6. Compare long-term, short-term and medium-term schedulers.',
+  a:`<div class="tw"><table class="tbl"><tr><th>المعيار</th><th>Long-term</th><th>Short-term</th><th>Medium-term</th></tr>
+  <tr><td>الوظيفة</td><td>اختيار Jobs من الـ Pool ودخولها الـ Memory</td><td>اختيار Process من الـ Ready queue لإعطائها الـ CPU</td><td>عمل Swap out / Swap in للـ Processes</td></tr>
+  <tr><td>التكرار</td><td>نادر</td><td>كتير جداً (ms)</td><td>حسب الحاجة</td></tr>
+  <tr><td>السرعة المطلوبة</td><td>ممكن يبقى بطيء</td><td>لازم سريع جداً</td><td>متوسطة</td></tr>
+  <tr><td>بيتحكم في</td><td>degree of multiprogramming</td><td>مين يشتغل دلوقتي</td><td>تقليل الحمل على الـ Memory</td></tr></table></div>
+  <div class="kw">كلمات مفتاحية: job scheduler – CPU scheduler – swapping – degree of multiprogramming – frequency</div>`},
+ {q:'Q7. Compare shared memory and message passing as IPC models.',
+  a:`<div class="tw"><table class="tbl"><tr><th>المعيار</th><th>Shared Memory</th><th>Message Passing</th></tr>
+  <tr><td>الفكرة</td><td>منطقة ذاكرة مشتركة بتقرا وتكتب فيها الـ Processes مباشرة</td><td>تبادل رسايل بـ send() و receive() عن طريق الـ Kernel</td></tr>
+  <tr><td>السرعة</td><td>أسرع (الـ Kernel بيتدخل في الإعداد بس)</td><td>أبطأ (system call لكل رسالة)</td></tr>
+  <tr><td>التنسيق</td><td>لازم Synchronization بيد المبرمج</td><td>الـ OS بيتولى الإدارة، أسهل</td></tr>
+  <tr><td>مناسب لـ</td><td>تبادل كمية بيانات كبيرة على نفس الجهاز</td><td>رسايل صغيرة، وأنظمة موزعة</td></tr></table></div>
+  <div class="kw">كلمات مفتاحية: shared region – kernel involvement – synchronization – send/receive – speed – distributed</div>`}
+];
+
+/* ================= engine ================= */
+const QUIZ=[null,{Q:QS1,topic:'المقدمة والـ Interrupts'},{Q:QS2,topic:'أنواع الأنظمة والـ System Calls'},{Q:QS3,topic:'الـ Processes'}];
+const ESS=[null,ES1,ES2,ES3];
+function shuf(n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mountQuiz(root,Q,topic){
+  const hasH=Q.some(x=>x.h);
+  root.innerHTML=`<section><h2>أسئلة الاختيار من متعدد (${Q.length} سؤال)</h2>
+  <p>الأسئلة بالإنجليزي والشرح بالعربي. اختار إجابتك وهيظهر لك الشرح فوراً، وكل الأسئلة تحت بعض.${hasH?' الأسئلة اللي عليها <span class="hard">⭐ تحدّي</span> للمتميزين.':''}</p>
+  ${hasH?'<label class="filt"><input type="checkbox" class="hf"> ⭐ اعرض أسئلة التحدّي بس</label>':''}
+  <div class="scorebar"><div class="top"><span class="sct"></span><span class="scr"></span></div><div class="bar"><i class="scb"></i></div></div>
+  <div class="ql"></div><div class="qf"></div>
+  <div class="row"><button class="btn alt rs">↺ ابدأ الأسئلة من جديد</button></div></section>
+  <div class="row nextrow"><button class="btn" data-next="1">التالي: أسئلة مقالية ←</button></div>`;
+  const ql=root.querySelector('.ql');let sc;
+  function upd(){root.querySelector('.sct').textContent=`تم حل ${sc.d} من ${Q.length}`;root.querySelector('.scr').textContent=`صح: ${sc.r}`;root.querySelector('.scb').style.width=(sc.d/Q.length*100)+'%'}
+  function build(){
+    sc={d:0,r:0};
+    ql.innerHTML=Q.map((x,i)=>{
+      const ord=x.o.length===2?[0,1]:shuf(x.o.length);
+      const opts=ord.map((oi,k)=>`<button class="opt" data-q="${i}" data-o="${oi}"><span class="ol">${'ABCD'[k]}</span><span>${x.o[oi]}</span></button>`).join('');
+      return `<article class="q ${x.h?'isHard':''}" data-h="${x.h?1:0}"><div class="qh"><span class="qn">Q${i+1}</span>${x.h?'<span class="hard">⭐ تحدّي</span>':''}</div><p class="qt">${x.q}</p><div class="opts">${opts}</div><div class="exp" hidden></div></article>`}).join('');
+    root.querySelector('.qf').innerHTML='';upd();
+    const hf=root.querySelector('.hf');if(hf)hf.checked=false;
+  }
+  ql.addEventListener('click',e=>{
+    const b=e.target.closest('.opt');if(!b)return;
+    const card=b.closest('.q');if(card.dataset.done)return;card.dataset.done=1;
+    const i=+b.dataset.q,o=+b.dataset.o,x=Q[i],ok=o===x.a;
+    card.querySelectorAll('.opt').forEach(btn=>{btn.disabled=true;if(+btn.dataset.o===x.a)btn.classList.add('right')});
+    if(!ok)b.classList.add('wrong');
+    const ex=card.querySelector('.exp');ex.hidden=false;ex.className='exp '+(ok?'ok':'no');
+    ex.innerHTML=`<p><b>${ok?'✅ إجابة صحيحة':'❌ إجابة غلط، الصح: <span class="en">'+x.o[x.a]+'</span>'}</b></p><p>${x.e}</p>`;
+    sc.d++;if(ok)sc.r++;upd();
+    if(sc.d===Q.length){const p=Math.round(sc.r/Q.length*100);
+      root.querySelector('.qf').innerHTML=`<div class="final">النتيجة النهائية: ${sc.r} من ${Q.length} (${p}%) — ${p>=85?'ممتاز 🌟 إنت فاهم '+topic+' كويس.':p>=60?'كويس 👍 راجع الأسئلة الغلط والتجارب المرتبطة بيها.':'محتاج مراجعة بسيطة 💪 ارجع للتجارب في الشرح وجرّب تاني.'}</div>`}
+  });
+  const hf=root.querySelector('.hf');
+  if(hf)hf.onchange=()=>{ql.querySelectorAll('.q').forEach(c=>{c.hidden=hf.checked&&c.dataset.h!=='1'})};
+  root.querySelector('.rs').onclick=()=>{build();root.scrollIntoView()};
+  build();
+}
+function mountEssays(root,E,last){
+  root.innerHTML=`<section><h2>الأسئلة المقالية (${E.length})</h2><p>اكتب إجابتك بنفسك الأول (ولو على ورقة)، وبعدها اعرض الإجابة النموذجية وعلّم على النقاط اللي غطّيتها.</p><div class="el">${E.map((x,i)=>`<article class="q essay"><p class="eq">${x.q}</p><textarea placeholder="اكتب إجابتك هنا (اختياري)..." aria-label="your answer"></textarea><button class="btn" data-e="${i}">👀 اعرض الإجابة النموذجية</button><div class="model" hidden>${x.a}</div></article>`).join('')}</div></section>
+  <div class="row nextrow">${last?'<div class="final">🎉 خلّصت مراجعة المحاضرات التلاتة. بالتوفيق!</div>':'<button class="btn" data-next="1">المحاضرة اللي بعدها →</button>'}</div>`;
+  root.addEventListener('click',e=>{const b=e.target.closest('button[data-e]');if(!b)return;const m=b.parentElement.querySelector('.model');m.hidden=!m.hidden;b.textContent=m.hidden?'👀 اعرض الإجابة النموذجية':'🙈 اخفي الإجابة'});
+}
+[1,2,3].forEach(n=>{
+  const L=document.getElementById('lec'+n);
+  mountQuiz(L.querySelector('[data-t=quiz]'),QUIZ[n].Q,QUIZ[n].topic);
+  mountEssays(L.querySelector('[data-t=essay]'),ESS[n],n===3);
+});
+/* hero stats */
+(function(){
+  const mcq=QS1.length+QS2.length+QS3.length,es=ES1.length+ES2.length+ES3.length;
+  function cnt(el,v){let k=0;const t=setInterval(()=>{k+=Math.max(1,Math.round(v/20));if(k>=v){k=v;clearInterval(t)}el.textContent=k},35)}
+  cnt($('#st-mcq'),mcq);cnt($('#st-es'),es);
+})();
+/* navigation */
+const state={l:1,t:'explain'};
+function go(l,t,noscroll){
+  state.l=l;state.t=t;
+  document.querySelectorAll('.lt').forEach(b=>{const on=+b.dataset.l===l;b.classList.toggle('act',on);b.setAttribute('aria-selected',on)});
+  document.querySelectorAll('.lec').forEach(x=>x.hidden=x.id!=='lec'+l);
+  document.querySelectorAll('#lec'+l+' .panel').forEach(p=>p.hidden=p.dataset.t!==t);
+  document.querySelectorAll('#sub button').forEach(b=>{const on=b.dataset.t===t;b.classList.toggle('act',on);b.setAttribute('aria-selected',on)});
+  document.querySelector('#sub [data-t=quiz]').textContent=`الكويز (${QUIZ[l].Q.length} سؤال)`;
+  document.querySelector('#sub [data-t=essay]').textContent=`أسئلة مقالية (${ESS[l].length})`;
+  if(!noscroll){const top=document.getElementById('lecTabs').getBoundingClientRect().top+window.scrollY-8;if(window.scrollY>top)window.scrollTo({top:top,behavior:'auto'})}
+  try{localStorage.setItem('os-review-pos',l+':'+t)}catch(e){}
+}
+document.querySelectorAll('.lt').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.l,'explain')));
+document.querySelectorAll('#sub button').forEach(b=>b.addEventListener('click',()=>go(state.l,b.dataset.t)));
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){const [l,t]=g.dataset.go.split(':');go(+l,t);return}
+  const n=e.target.closest('[data-next]');if(n){if(state.t==='quiz')go(state.l,'essay');else go(state.l+1,'explain')}
+});
+try{const p=(localStorage.getItem('os-review-pos')||'').split(':');if(p.length===2&&/^[123]$/.test(p[0])&&['explain','quiz','essay'].includes(p[1]))go(+p[0],p[1],true);else go(1,'explain',true)}catch(e){go(1,'explain',true)}
+
+</script>
+</body>
+</html>
