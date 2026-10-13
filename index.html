@@ -606,10 +606,7 @@ figure.fig figcaption{font-size:13.5px;color:#475b5a;margin-top:6px;line-height:
     <tr><td>Communication</td><td>تبادل بيانات بين processes</td><td class="en">CreatePipe() / pipe()</td></tr>
     <tr><td>Protection</td><td>التحكم في الوصول للموارد</td><td class="en">SetFileSecurity() / chmod()</td></tr>
   </table></div>
-  <div class="lab">
-    <span class="lab-title">🧪 تجربة ٥: الـ system call دي من أنهي نوع؟</span>
-    <div id="B-m3"></div>
-  </div>
+  
 </section>
 
 <section id="b-str">
@@ -1466,18 +1463,6 @@ mountMatcher($('#B-m2'),[
     msg.innerHTML+='<br>✅ البرنامج خد الخدمة من غير ما ينفّذ privileged instruction بنفسه.';busy=false;
   };
 })();
-
-/* B5 syscall types */
-mountMatcher($('#B-m3'),[
- {t:'fork()',a:0,e:'<code>fork()</code> بينشئ process جديدة: <b>Process control</b>.'},
- {t:'open()',a:1,e:'<code>open()</code> للملفات: <b>File management</b>.'},
- {t:'ioctl()',a:2,e:'<code>ioctl()</code> للتحكم في الأجهزة: <b>Device management</b>.'},
- {t:'getpid()',a:3,e:'<code>getpid()</code> بيرجّع رقم الـ process: <b>Information maintenance</b>.'},
- {t:'pipe()',a:4,e:'<code>pipe()</code> لتبادل بيانات بين processes: <b>Communication</b>.'},
- {t:'chmod()',a:5,e:'<code>chmod()</code> بيغيّر صلاحيات الوصول: <b>Protection</b>.'},
- {t:'WaitForSingleObject()',a:0,e:'نظير <code>wait()</code> في Windows: <b>Process control</b>.'},
- {t:'SetTimer()',a:3,e:'ضبط الوقت: <b>Information maintenance</b> (زي <code>alarm()</code>).'}
-],['Process control','File management','Device management','Information maintenance','Communication','Protection']);
 
 /* B6 structures */
 (function(){
