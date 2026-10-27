@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>OS-Lectures1 2 3</title>
+<title>مراجعة نظم التشغيل (OS) — المحاضرات 1 إلى 5</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 
@@ -324,6 +324,20 @@ figure.fig figcaption{font-size:13.5px;color:#475b5a;margin-top:6px;line-height:
 .hrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .by{font-weight:700;font-size:14px;color:#9ff7e4;direction:ltr;unicode-bidi:isolate;background:rgba(255,255,255,.08);border-radius:99px;padding:3px 14px;border:1px solid rgba(127,245,222,.35)}
 
+
+/* ===== 4 lectures + threads lab ===== */
+.lec-tabs{grid-template-columns:repeat(4,1fr);gap:10px}
+.lt b{font-size:16px}
+@media(max-width:700px){.lec-tabs{gap:5px}.lt{padding:8px 3px}.lt b{font-size:13px}.lt small{font-size:10px;line-height:1.35}}
+.tc.j3{background:#7c3aed}.tc.io.j3{border-color:#7c3aed}
+.pbox{border:2px solid var(--brand);border-radius:14px;padding:10px;direction:ltr;background:var(--card)}
+.pbox .shm{background:var(--brand-soft);border-radius:10px;padding:6px;text-align:center;font-weight:700;margin-bottom:8px;line-height:1.5}
+.thr-row{display:flex;gap:8px;direction:ltr}
+.th{flex:1;border-radius:10px;padding:6px 4px;font-size:13px;text-align:center;font-weight:700;color:#10211f;line-height:1.5}
+.th small{font-weight:500}
+.th.t0{background:#cfe0ff}.th.t1{background:#c9efd9}.th.t2{background:#fde0c4}.th.t3{background:#e4d6fb}
+.pbox.dead{border-color:var(--bad);background:var(--bad-soft)}
+.th.dead{background:#f5b3bd;color:#5b0d1b;animation:shake .25s 3}
 </style>
 </head>
 <body>
@@ -339,9 +353,13 @@ figure.fig figcaption{font-size:13.5px;color:#475b5a;margin-top:6px;line-height:
   <div class="wrap"><div class="hero-in">
     <div class="hero-txt">
       <div class="hrow"><span class="eyebrow"><i></i>Operating Systems • 2nd Year CS</span><span class="by">Dr. Ali A. Ahmed</span></div>
-      <h1><span class="grad">Operating Systems</span></h1>
+      <h1>مراجعة <span class="grad">Operating Systems</span></h1>
       <p class="lead">شرح مبسّط للمفاهيم بتجارب تفاعلية، وبنك أسئلة بتوضيح لكل إجابة، وأسئلة مقالية بإجابات نموذجية.</p>
-      
+      <div class="stats">
+        <div class="stat"><b data-n="5">5</b><span>محاضرات</span></div>
+        <div class="stat"><b id="st-mcq">0</b><span>سؤال اختيار</span></div>
+        <div class="stat"><b id="st-es">0</b><span>سؤال مقالي</span></div>
+      </div>
     </div>
     <svg class="orbit" viewBox="0 0 300 300" role="img" aria-label="User, Applications, Kernel, CPU rings">
       <defs><radialGradient id="cg" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#ffd978"/><stop offset="1" stop-color="#e0a021"/></radialGradient></defs>
@@ -364,7 +382,8 @@ figure.fig figcaption{font-size:13.5px;color:#475b5a;margin-top:6px;line-height:
 <div class="wrap"><div class="lec-tabs" id="lecTabs" role="tablist">
   <button class="lt act" data-l="1" role="tab"><b>المحاضرة 1</b><small>Intro, Computer Organization &amp; Interrupts</small></button>
   <button class="lt" data-l="2" role="tab"><b>المحاضرة 2</b><small>System Types, Services, System Calls &amp; Structure</small></button>
-  <button class="lt" data-l="3" role="tab"><b>المحاضرة 3</b><small>Processes — Process Concept</small></button>
+  <button class="lt" data-l="3" role="tab"><b>المحاضرة 3و4</b><small>Processes — States, PCB, Scheduling &amp; IPC</small></button>
+  <button class="lt" data-l="4" role="tab"><b>المحاضرة 5</b><small>Threads &amp; Multithreading Models</small></button>
 </div></div>
 <nav id="sub" role="tablist"><div class="wrap navin">
   <button role="tab" data-t="explain" class="act">شرح المفاهيم</button>
@@ -606,7 +625,10 @@ figure.fig figcaption{font-size:13.5px;color:#475b5a;margin-top:6px;line-height:
     <tr><td>Communication</td><td>تبادل بيانات بين processes</td><td class="en">CreatePipe() / pipe()</td></tr>
     <tr><td>Protection</td><td>التحكم في الوصول للموارد</td><td class="en">SetFileSecurity() / chmod()</td></tr>
   </table></div>
-  
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٥: الـ system call دي من أنهي نوع؟</span>
+    <div id="B-m3"></div>
+  </div>
 </section>
 
 <section id="b-str">
@@ -959,7 +981,154 @@ figure.fig figcaption{font-size:13.5px;color:#475b5a;margin-top:6px;line-height:
 </div>
 <div class="panel" data-t="quiz" hidden></div>
 <div class="panel" data-t="essay" hidden></div>
-</div></main>
+</div><div class="lec" id="lec4" hidden>
+<div class="panel" data-t="explain">
+<section id="c-what">
+  <h2>١) يعني إيه Thread؟</h2>
+  <p>تخيّل مطبخ مطعم 🍳: المطبخ كله هو الـ <b>Process</b> (فيه الأدوات والمواد الخام اللي الكل بيشاركها). والطباخين هم الـ <b>Threads</b>: كل واحد بيشتغل على طلب مختلف، وله دفتر وصفته الخاص وإيده الخاصة، بس كلهم على نفس مواد المطبخ.</p>
+  <div class="def">Thread = أصغر وحدة بيجدولها الـ CPU. الـ process الواحدة ممكن يكون فيها thread واحد أو أكتر، وكلهم بيشاركوا ذاكرة الـ process، لكن كل thread له <b>program counter</b> و<b>registers</b> و<b>stack</b> خاصين بيه.</div>
+  <div class="tw"><table class="tbl">
+    <tr><th>Traditional Process</th><th>Modern Process</th></tr>
+    <tr><td>thread واحد للتنفيذ<br>مثال: الآلة الحاسبة (Calculator)</td><td>أكتر من thread جوه process<br>مثال: المتصفح بيحمّل صفحة ويشغّل فيديو ويستقبل ضغطات المستخدم في نفس الوقت</td></tr>
+  </table></div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ١: الـ Threads والـ Processes لما حاجة تضرب</span>
+    <p class="muted" style="margin:2px 0">اختار الوضع، ضيف threads، وبعدين دوس "اضرب واحد" وشوف مين بيتأثر.</p>
+    <div class="tabs" id="C-mode"></div>
+    <div id="C-proc"></div>
+    <div class="row"><button class="btn alt" id="C-add">➕ ضيف thread</button><button class="btn alt" id="C-rem">➖ شيل thread</button><button class="btn hot" id="C-crash">💥 اضرب واحد</button><button class="btn alt" id="C-reset">↺ رجّع</button></div>
+    <div class="msg" id="C-pmsg">جرّب 👆</div>
+  </div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٢: مشترك ولا خاص؟</span>
+    <p class="muted" style="margin:2px 0">الحاجة دي بيشاركها كل threads الـ process ولا كل thread له نسخته؟</p>
+    <div id="C-m1"></div>
+  </div>
+</section>
+
+<section id="c-why">
+  <h2>٢) ليه محتاجين Threads؟ (Lightweight Execution)</h2>
+  <div class="card">
+    <p>🔴 <b>المشكلة:</b> إنشاء process جديدة تقيل: بتنسخ page tables، وتحجز مساحة ذاكرة منفصلة، وفيها شغل إداري كتير للـ OS.</p>
+    <p>🟢 <b>الحل:</b> Threads = "lightweight processes": أكتر من مسار تنفيذ جوه <b>نفس</b> الـ process بيشاركوا الموارد.</p>
+    <p>⚡ <b>التواصل بين الـ threads:</b> سريع جداً، لأنهم بيقروا ويكتبوا في نفس الذاكرة المشتركة مباشرة.</p>
+    <p>🔒 <b>كل thread بيملك لوحده:</b> Thread ID (TID)، و Program Counter و Registers، و Stack خاص.</p>
+  </div>
+  <h3>المقارنة: Process مقابل Thread</h3>
+  <div class="tw"><table class="tbl">
+    <tr><th>الجانب</th><th>Process</th><th>Thread</th></tr>
+    <tr><td>التعريف</td><td>برنامج بيتنفّذ</td><td>وحدة تنفيذ جوه process</td></tr>
+    <tr><td>الذاكرة</td><td>address space منفصل</td><td>بيشارك address space الـ process</td></tr>
+    <tr><td>موارده الخاصة</td><td>Code, data, heap, files</td><td>Stack, registers, program counter</td></tr>
+    <tr><td>تكلفة الإنشاء</td><td>تقيلة (بطيئة)</td><td>خفيفة (سريعة)</td></tr>
+    <tr><td>التواصل</td><td>محتاج دعم الـ OS (IPC)</td><td>مباشرة عن طريق متغيرات مشتركة</td></tr>
+    <tr><td>لو ضرب</td><td>غالباً باقي الـ processes مبتتأثرش</td><td>الـ process كلها ممكن تقع</td></tr>
+  </table></div>
+</section>
+
+<section id="c-multi">
+  <h2>٣) البرمجة على أكتر من Core (Multicore Programming)</h2>
+  <p>الـ Multithreading بيخلّينا نستفيد من الأجهزة اللي فيها multicore أو multiprocessor بكفاءة أعلى.</p>
+  <div class="card">
+    <p><b>Concurrency:</b> على core واحد، الـ threads بتاخد أدوار بسرعة فكلها "بتتقدم" لكن مفيش اتنين بيشتغلوا في نفس اللحظة.</p>
+    <p><b>Parallelism:</b> على أكتر من core، أكتر من thread بتتنفّذ فعلاً <b>في نفس اللحظة</b>.</p>
+  </div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٣: Concurrency ضد Parallelism</span>
+    <p class="muted" style="margin:2px 0">٤ threads (T1…T4) على عدد cores مختلف. لاحظ مين بيشتغل في نفس الخانة الزمنية.</p>
+    <div class="tabs" id="C-cores"></div>
+    <div class="tl" id="C-tl"></div>
+    <div class="info" id="C-cinfo"></div>
+  </div>
+  <h3>أنواع الـ Parallelism</h3>
+  <div class="tw"><table class="tbl">
+    <tr><th>Data Parallelism</th><th>Task Parallelism</th></tr>
+    <tr><td>نفس العملية على أجزاء مختلفة من البيانات.<br>مثال: جمع array: core 0 بيجمع النص الأول وcore 1 النص التاني.</td><td>عمليات مختلفة على نفس البيانات أو بيانات مختلفة.<br>مثال: thread بيرتّب، وthread بيحسب المتوسط، وthread بيرسم graph.</td></tr>
+  </table></div>
+  <p class="muted">أغلب البرامج الحقيقية بتستخدم النوعين مع بعض.</p>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٤: جرّب النوعين</span>
+    <div class="tabs" id="C-par"></div>
+    <div id="C-parbox"></div>
+    <div class="msg" id="C-parmsg"></div>
+    <div class="row"><button class="btn hot" id="C-parrun">▶ شغّل</button></div>
+  </div>
+  <h3>تحديات البرمجة على multicore</h3>
+  <div class="card"><ol>
+    <li><b>Dividing work:</b> إزاي نقسّم المهمة لأجزاء مستقلة.</li>
+    <li><b>Balance:</b> كل core ياخد تقريباً نفس كمية الشغل.</li>
+    <li><b>Data splitting:</b> نقسّم البيانات بحيث كل core يشتغل على جزء خاص بيه.</li>
+    <li><b>Data dependency:</b> بعض العمليات محتاجة نتايج من عمليات تانية فلازم تنسيق.</li>
+    <li><b>Testing &amp; debugging:</b> أخطاء ممكن تظهر بشكل عشوائي (race conditions).</li>
+  </ol></div>
+</section>
+
+<section id="c-models">
+  <h2>٤) User Threads و Kernel Threads ونماذج الـ Multithreading</h2>
+  <div class="card">
+    <p><b>User threads:</b> بيعملها المبرمج باستخدام threads library في كود التطبيق.</p>
+    <p><b>Kernel threads:</b> بيديرها الـ OS مباشرة.</p>
+    <p>🎯 <b>الهدف:</b> نربط (map) الـ user threads بالـ kernel threads عشان الـ CPU يقدر ينفّذها. ولدينا تلات نماذج: Many-to-One و One-to-One و Many-to-Many.</p>
+  </div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٥: النماذج التلاتة وأثر الـ Blocking</span>
+    <p class="muted" style="margin:2px 0">اختار نموذج، وبعدين خلّي U2 يستنى I/O (يتعمله block) وشوف مين بيتأثر.</p>
+    <div class="tabs" id="C-mod"></div>
+    <svg id="C-svg" viewBox="0 0 420 200" style="width:100%;max-width:520px;display:block;margin:6px auto;direction:ltr" role="img" aria-label="thread mapping"></svg>
+    <div class="row"><button class="btn hot" id="C-blk">🔒 U2 بيستنى I/O</button><button class="btn alt" id="C-unblk">↺ رجّع</button></div>
+    <div class="info" id="C-minfo"></div>
+  </div>
+  <div class="tw"><table class="tbl">
+    <tr><th>النموذج</th><th>الفكرة</th><th>المزايا</th><th>العيوب</th><th>التشبيه</th></tr>
+    <tr><td><b>Many-to-One</b></td><td>user threads كتير على kernel thread واحد</td><td>بسيط، وإنشاء الـ user threads خفيف</td><td>لو thread اتعملها block الكل بيتحجز. ومفيش true parallelism على multicore. قليل الاستخدام حالياً</td><td>موظفين كتير على خط تليفون واحد</td></tr>
+    <tr><td><b>One-to-One</b></td><td>كل user thread لها kernel thread</td><td>True concurrency على multicore. لو thread اتحجزت التانيين يكملوا</td><td>إنشاء kernel threads بياكل ذاكرة وCPU overhead</td><td>كل موظف له كمبيوتر خاص (Windows, Linux)</td></tr>
+    <tr><td><b>Many-to-Many</b></td><td>user threads كتير على عدد أصغر أو مساوي من kernel threads</td><td>أحسن ما في النموذجين: threads كتير من غير هدر للموارد، ومشكلة الـ blocking محلولة</td><td>معقد في التصميم والتنفيذ جوه الـ OS</td><td>٢٠ مكالمة تتوزع على ٤ ممثلين خدمة عملاء</td></tr>
+  </table></div>
+  <div class="callout">💡 ملحوظة: في السلايد، "One thread blocking causes all to block" مكتوبة تحت Pros في Many-to-One، لكن دي في الحقيقة <b>عيب</b> وليست ميزة. المقصود إنه نموذج بسيط، لكن الـ blocking بيوقف الكل.</div>
+</section>
+
+<section id="c-ben">
+  <h2>٥) فوائد الـ Threads</h2>
+  <div class="card">
+    <p>⚡ <b>Responsiveness:</b> البرنامج يكمّل شغل لو جزء منه اتحجز، وده مهم جداً للـ user interfaces.</p>
+    <p>🤝 <b>Resource Sharing:</b> الـ threads بتشارك موارد الـ process، وده أسهل من shared memory أو message passing.</p>
+    <p>💰 <b>Economy:</b> أرخص من إنشاء process، والتبديل بين threads overhead أقل من الـ context switching.</p>
+    <p>📈 <b>Scalability:</b> الـ process تقدر تستفيد من معمارية الـ multicore.</p>
+  </div>
+  <div class="lab">
+    <span class="lab-title">🧪 تجربة ٦: الفايدة دي اسمها إيه؟</span>
+    <div id="C-m2"></div>
+  </div>
+</section>
+
+<section id="c-sum">
+  <h2>ملخص سريع قبل الأسئلة</h2>
+  <div class="card"><ul>
+    <li>Thread = وحدة تنفيذ خفيفة جوه process، بتشارك الكود والبيانات والملفات، ولها stack وregisters وPC خاصين.</li>
+    <li>الـ Multithreading بيحسّن: responsiveness, resource sharing, economy, scalability.</li>
+    <li>Concurrency = تقدّم بالتناوب. Parallelism = تنفيذ فعلي في نفس اللحظة على أكتر من core.</li>
+    <li>Data parallelism: نفس العملية على بيانات مقسّمة. Task parallelism: عمليات مختلفة.</li>
+    <li>النماذج: Many-to-One (بسيط لكن blocking يوقف الكل)، One-to-One (parallelism كامل لكن overhead)، Many-to-Many (توازن لكن معقد).</li>
+  </ul></div>
+  <h3>قاموس سريع</h3>
+  <div class="gl">
+    <div><b>Thread</b> — أصغر وحدة بيجدولها الـ CPU.</div>
+    <div><b>TID</b> — رقم تعريف الـ thread.</div>
+    <div><b>Multicore</b> — معالج فيه أكتر من core.</div>
+    <div><b>Concurrency</b> — تقدّم عدة مهام بالتناوب.</div>
+    <div><b>Parallelism</b> — تنفيذ فعلي في نفس اللحظة.</div>
+    <div><b>Race condition</b> — خطأ بيظهر بسبب ترتيب توقيت الـ threads على بيانات مشتركة.</div>
+    <div><b>User thread</b> — thread بتتعمل من library في التطبيق.</div>
+    <div><b>Kernel thread</b> — thread بيديرها الـ OS.</div>
+  </div>
+</section>
+
+<div class="row nextrow"><button class="btn" data-go="4:quiz">التالي: الكويز ←</button></div>
+</div>
+<div class="panel" data-t="quiz" hidden></div>
+<div class="panel" data-t="essay" hidden></div>
+</div>
+</main>
 <footer style="text-align:center;padding:18px;margin-top:28px;border-top:1px solid var(--line);color:var(--muted);font-size:14px">
   <strong style="color:var(--ink);font-size:16px">Dr. Ali A. Ahmed</strong><br>
   Dept. of Computer Science, Faculty of Science, Minia University<br>
@@ -1463,7 +1632,19 @@ mountMatcher($('#B-m2'),[
     msg.innerHTML+='<br>✅ البرنامج خد الخدمة من غير ما ينفّذ privileged instruction بنفسه.';busy=false;
   };
 })();
- 
+
+/* B5 syscall types */
+mountMatcher($('#B-m3'),[
+ {t:'fork()',a:0,e:'<code>fork()</code> بينشئ process جديدة: <b>Process control</b>.'},
+ {t:'open()',a:1,e:'<code>open()</code> للملفات: <b>File management</b>.'},
+ {t:'ioctl()',a:2,e:'<code>ioctl()</code> للتحكم في الأجهزة: <b>Device management</b>.'},
+ {t:'getpid()',a:3,e:'<code>getpid()</code> بيرجّع رقم الـ process: <b>Information maintenance</b>.'},
+ {t:'pipe()',a:4,e:'<code>pipe()</code> لتبادل بيانات بين processes: <b>Communication</b>.'},
+ {t:'chmod()',a:5,e:'<code>chmod()</code> بيغيّر صلاحيات الوصول: <b>Protection</b>.'},
+ {t:'WaitForSingleObject()',a:0,e:'نظير <code>wait()</code> في Windows: <b>Process control</b>.'},
+ {t:'SetTimer()',a:3,e:'ضبط الوقت: <b>Information maintenance</b> (زي <code>alarm()</code>).'}
+],['Process control','File management','Device management','Information maintenance','Communication','Protection']);
+
 /* B6 structures */
 (function(){
   const S=[
@@ -1762,9 +1943,224 @@ const ES3=[
   <div class="kw">كلمات مفتاحية: shared region – kernel involvement – synchronization – send/receive – speed – distributed</div>`}
 ];
 
+/* ================= Lecture 5 (Threads) labs ================= */
+/* C1 threads vs processes crash */
+(function(){
+  let mode=0,n=3,dead=null;
+  const box=$('#C-proc'),msg=$('#C-pmsg'),tabs=$('#C-mode');
+  tabs.innerHTML='<button class="btn on" data-i="0">Threads في process واحدة</button><button class="btn alt" data-i="1">٣ processes منفصلة</button>';
+  function render(){
+    $('#C-add').disabled=mode===1||n>=4;$('#C-rem').disabled=mode===1||n<=1;
+    if(mode===0){
+      box.innerHTML=`<div class="pbox ${dead==='all'?'dead':''}"><div class="shm">Shared Memory: Code + Data + Files</div><div class="thr-row">${Array.from({length:n},(_,i)=>`<div class="th t${i} ${dead==='all'?'dead':''}">Thread ${i+1}<br><small>Stack + Registers + PC</small></div>`).join('')}</div></div>`;
+    }else{
+      box.innerHTML=`<div class="thr-row">${[0,1,2].map(i=>`<div class="pbox ${dead===i?'dead':''}" style="flex:1"><div class="shm">Process ${i+1}<br><small>own memory</small></div><div class="th t${i} ${dead===i?'dead':''}">1 thread<br><small>Stack + Regs + PC</small></div></div>`).join('')}</div>`;
+    }
+  }
+  const reset=()=>{dead=null;msg.textContent=mode?'كل process لها address space خاص بيها.':'الـ threads بتشارك نفس الذاكرة (فوق) ولكل thread stack وregisters خاصة.';render()};
+  tabs.onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=+b.dataset.i;setTabs(tabs,mode);reset()};
+  $('#C-add').onclick=()=>{if(n<4){n++;dead=null;render()}};
+  $('#C-rem').onclick=()=>{if(n>1){n--;dead=null;render()}};
+  $('#C-reset').onclick=reset;
+  $('#C-crash').onclick=()=>{
+    if(mode===0){dead='all';msg.innerHTML='💥 thread واحدة ضربت وهي بتشارك الـ address space مع الباقي، فالـ <b>process كلها</b> ممكن تقع.'}
+    else{dead=0;msg.innerHTML='💥 Process 1 ضربت، لكن Process 2 و 3 كل واحدة في address space منفصل فـ <b>مبتتأثرش</b> غالباً.'}
+    render();
+  };
+  reset();
+})();
+/* C2 shared vs private */
+mountMatcher($('#C-m1'),[
+ {t:'Code of the program',a:0,e:'الكود <b>مشترك</b> بين كل threads الـ process.'},
+ {t:'Global data / shared variables',a:0,e:'البيانات <b>مشتركة</b>، وده سبب سرعة التواصل (لكن كمان سبب الـ race conditions).'},
+ {t:'Open files',a:0,e:'الملفات المفتوحة <b>مشتركة</b> على مستوى الـ process.'},
+ {t:'Heap (dynamic memory)',a:0,e:'حسب جدول السلايد، الـ heap من موارد الـ process فهي <b>مشتركة</b> بين الـ threads.'},
+ {t:'Stack',a:1,e:'كل thread لها <b>stack خاص</b> (للمتغيرات المحلية واستدعاءات الدوال).'},
+ {t:'Program Counter (PC)',a:1,e:'كل thread بتبقى في مكان مختلف في الكود، فلها <b>PC خاص</b>.'},
+ {t:'Registers',a:1,e:'كل thread لها <b>registers خاصة</b> عشان تكمّل صح بعد التبديل.'},
+ {t:'Thread ID (TID)',a:1,e:'الـ TID <b>خاص</b> بكل thread.'}
+],['Shared by all threads 🤝','Private to each thread 🔒']);
+
+/* C3 concurrency vs parallelism */
+(function(){
+  const C=[1,2,4],SLOTS=8,box=$('#C-cores');
+  box.innerHTML=C.map((c,i)=>`<button class="btn alt" data-i="${i}">${c} core${c>1?'s':''}</button>`).join('');
+  function show(i){
+    setTabs(box,i);const cores=C[i];
+    const ax='<div class="tlrow"><b></b>'+Array.from({length:SLOTS},(_,k)=>`<span class="tc axis">${k}</span>`).join('')+'</div>';
+    let rows='';
+    for(let c=0;c<cores;c++){
+      const th=[0,1,2,3].filter(t=>t%cores===c);
+      rows+=`<div class="tlrow"><b>core ${c+1}</b>`+Array.from({length:SLOTS},(_,s)=>{const t=th[s%th.length];return `<span class="tc j${t}">T${t+1}</span>`}).join('')+'</div>';
+    }
+    $('#C-tl').innerHTML=ax+rows;
+    const txt=cores===1?'<b>Concurrency:</b> core واحد بيبدّل بين الـ threads بسرعة. كلها بتتقدّم، لكن في أي لحظة thread <b>واحدة بس</b> بتشتغل.':cores===2?'<b>Parallelism:</b> في كل خانة زمنية thread على كل core، يعني <b>٢ threads</b> بيشتغلوا في نفس اللحظة.':'<b>Parallelism كامل:</b> كل thread على core خاص بيها، فالـ ٤ بيشتغلوا مع بعض.';
+    $('#C-cinfo').innerHTML=`${txt}<br>عدد الـ threads اللي بتشتغل في نفس اللحظة: <b>${cores}</b>`;
+  }
+  box.onclick=e=>{const b=e.target.closest('button');if(b)show(+b.dataset.i)};show(0);
+})();
+
+/* C4 data vs task parallelism */
+(function(){
+  const tabs=$('#C-par'),pb=$('#C-parbox'),msg=$('#C-parmsg');let mode=0,timer=null;
+  tabs.innerHTML='<button class="btn on" data-i="0">Data parallelism</button><button class="btn alt" data-i="1">Task parallelism</button>';
+  function draw(){
+    clearInterval(timer);timer=null;
+    if(mode===0){
+      pb.innerHTML='<p class="muted" style="margin:4px 0">C = A + B (٨ عناصر). core 0 بياخد النص الأول وcore 1 النص التاني.</p><div class="tl"><div class="tlrow"><b>core 0</b>'+[0,1,2,3].map(i=>`<span class="tc idle" id="C-d${i}">+</span>`).join('')+'</div><div class="tlrow"><b>core 1</b>'+[4,5,6,7].map(i=>`<span class="tc idle" id="C-d${i}">+</span>`).join('')+'</div></div>';
+      msg.textContent='نفس العملية (+) على بيانات مختلفة.';
+    }else{
+      pb.innerHTML='<p class="muted" style="margin:4px 0">نفس البيانات، لكن كل thread بتعمل مهمة مختلفة:</p>'+['Thread A: Sort','Thread B: Average','Thread C: Draw graph'].map((n,i)=>`<div class="mrow"><span style="width:150px">${n}</span><div class="bar"><i class="blue" id="C-t${i}" style="background:${['#2563eb','#0f9d6e','#d9731a'][i]}"></i></div></div>`).join('');
+      msg.textContent='عمليات مختلفة بتشتغل مع بعض.';
+    }
+  }
+  tabs.onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=+b.dataset.i;setTabs(tabs,mode);draw()};
+  $('#C-parrun').onclick=()=>{
+    if(timer)return;draw();let t=0;
+    timer=setInterval(()=>{
+      t++;
+      if(mode===0){
+        if(t<=4){const a=$('#C-d'+(t-1)),b=$('#C-d'+(t+3));a.className='tc j0';b.className='tc j1';a.textContent=b.textContent='✓'}
+        if(t===4){clearInterval(timer);timer=null;msg.innerHTML='✅ خلّصنا في <b>٤ خطوات</b> بدل ٨ لو core واحد بس. (Data parallelism)'}
+      }else{
+        [0,1,2].forEach(i=>$('#C-t'+i).style.width=Math.min(100,t*(i===0?12:i===1?20:15))+'%');
+        if(t>=9){clearInterval(timer);timer=null;msg.innerHTML='✅ التلات مهام اتنفّذت <b>في نفس الوقت</b> على threads مختلفة. (Task parallelism)'}
+      }
+    },450);
+  };
+  draw();
+})();
+
+/* C5 multithreading models */
+(function(){
+  const M=['Many-to-One','One-to-One','Many-to-Many'],box=$('#C-mod'),svg=$('#C-svg');
+  let m=0,blocked=false;
+  box.innerHTML=M.map((x,i)=>`<button class="btn alt" data-i="${i}">${x}</button>`).join('');
+  const UX=[55,155,265,365],NS='http://www.w3.org/2000/svg';
+  function rect(x,y,label,bad){return `<rect x="${x-34}" y="${y}" width="68" height="30" rx="8" fill="${bad?'#f5b3bd':'#bfe8c7'}" stroke="${bad?'#c0243f':'#1f8a52'}" stroke-width="2"/><text x="${x}" y="${y+20}" text-anchor="middle" font-size="13" font-weight="700" fill="#10211f">${label}</text>`}
+  function draw(){
+    const ks=m===0?[210]:m===1?UX:[110,210,310];
+    const badU=i=>blocked&&(m===0||i===1);
+    const badK=j=>blocked&&(m===0||(m===1&&j===1)||(m===2&&j===0));
+    let s=`<line x1="10" y1="100" x2="410" y2="100" stroke="#8791ab" stroke-dasharray="5 4"/><text x="12" y="92" font-size="11" fill="#8791ab">user space</text><text x="12" y="116" font-size="11" fill="#8791ab">kernel space</text>`;
+    const line=(x1,y1,x2,y2,bad)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${bad?'#c0243f':'#6b7a99'}" stroke-width="2"/>`;
+    UX.forEach((x,i)=>{
+      if(m===1)s+=line(x,48,x,150,badU(i));else s+=line(x,48,210,100,badU(i));
+    });
+    if(m!==1){ks.forEach((x,j)=>{s+=line(210,100,x,150,badK(j))});s+=`<rect x="205" y="95" width="10" height="10" fill="#fff" stroke="#6b7a99" stroke-width="2"/>`}
+    UX.forEach((x,i)=>{s+=rect(x,18,'U'+(i+1),badU(i))});
+    ks.forEach((x,j)=>{s+=rect(x,150,'K'+(j+1),badK(j))});
+    svg.innerHTML=s;
+    const T=[
+     ['kernel thread واحدة بس يعني <b>مفيش true parallelism</b>، ولو thread اتحجزت <b>الكل</b> بيستنى.','1','❌','موظفين كتير على خط تليفون واحد (نادر الاستخدام حالياً).'],
+     ['كل thread ليها kernel thread، فلو U2 اتحجزت <b>الباقي بيكمّل عادي</b> وبيتنفّذوا parallel على multicore.','4 (overhead أعلى)','✅','كل موظف له كمبيوتر خاص (Windows, Linux).'],
+     ['الـ user threads بتتوزّع ديناميكياً على الـ kernel threads المتاحة، فلو واحدة اتحجزت <b>التانيين بيكملوا</b>، والموارد مش بتتهدر.','3 (أقل من عدد الـ user threads)','✅','٢٠ مكالمة بتتوزّع على ٤ ممثلين أول ما أي واحد يفضى. التصميم معقد.']][m];
+    $('#C-minfo').innerHTML=`<b class="en">${M[m]}</b><br>${blocked?'🔒 <b>U2 اتحجزت:</b> ':''}${T[0]}<br>عدد الـ kernel threads: <b>${T[1]}</b> • Parallel على multicore: <b>${T[2]}</b><br><span class="muted">${T[3]}</span>`;
+  }
+  box.onclick=e=>{const b=e.target.closest('button');if(!b)return;m=+b.dataset.i;blocked=false;setTabs(box,m);draw()};
+  $('#C-blk').onclick=()=>{blocked=true;draw()};
+  $('#C-unblk').onclick=()=>{blocked=false;draw()};
+  setTabs(box,0);draw();
+})();
+
+/* C6 benefits matcher */
+mountMatcher($('#C-m2'),[
+ {t:'A document editor keeps accepting typing while a big file loads in the background.',a:0,e:'الـ UI فضل شغال حتى لما جزء اتحجز = <b>Responsiveness</b>.'},
+ {t:'Two threads read and write the same variable without any message passing.',a:1,e:'بيشاركوا موارد الـ process مباشرة = <b>Resource sharing</b>.'},
+ {t:'Creating a thread costs less than creating a whole new process.',a:2,e:'أرخص في الإنشاء والتبديل = <b>Economy</b>.'},
+ {t:'The same program uses all 8 cores of a modern CPU.',a:3,e:'الاستفادة من الـ multicore = <b>Scalability</b>.'},
+ {t:'Switching between two threads has lower overhead than a full context switch.',a:2,e:'ده بند من <b>Economy</b>.'},
+ {t:'A video player decodes frames in one thread while another handles the buttons.',a:0,e:'الواجهة فضلت متجاوبة = <b>Responsiveness</b>.'}
+],['Responsiveness','Resource sharing','Economy','Scalability']);
+
+/* ================= Lecture 5 questions ================= */
+const QS4=[
+ {q:"What is a thread?",o:["The smallest unit of CPU scheduling inside a process","A whole program stored on the disk","A type of memory chip","A command typed by the user"],a:0,
+  e:`الـ Thread هو أصغر وحدة بيجدولها الـ CPU، وهو وحدة تنفيذ جوه الـ process.`},
+ {q:"Which of these is shared by all the threads of one process?",o:["Code, data and open files","The stack","The program counter","The registers"],a:0,
+  e:`الكود والبيانات والملفات <b>مشتركة</b>. الـ stack والـ PC والـ registers خاصة بكل thread (تجربة ٢).`},
+ {q:"Which of these does each thread own privately?",o:["Its own stack, registers and program counter","The code of the program","The open files","The whole address space"],a:0,
+  e:`كل thread لها stack وregisters وPC وThread ID خاصين بيها، عشان تكمّل من مكانها هي.`},
+ {q:"A web browser loads a page, plays a video and reacts to your clicks at the same time. Which kind of process is it?",o:["A modern multithreaded process","A traditional single-threaded process","A batch job","A kernel module"],a:0,
+  e:`المتصفح بيستخدم أكتر من thread لمهام مختلفة في نفس الوقت = <b>modern process</b>. الآلة الحاسبة هي مثال الـ single thread.`},
+ {q:"Why is creating a new process called heavy?",o:["It needs copying page tables, a separate memory space and a lot of OS bookkeeping","It needs no memory","It only needs one register","It is always done by the user"],a:0,
+  e:`إنشاء process فيها نسخ page tables وحجز ذاكرة منفصلة وشغل إداري للـ OS، وده بيخلي الـ threads الخفيفة بديل أحسن.`},
+ {q:"How do the threads of the same process usually exchange data?",o:["Directly through shared memory and variables","Only through the network","By rebooting the computer","They cannot exchange data"],a:0,
+  e:`بيقروا ويكتبوا في نفس الذاكرة المشتركة فالتواصل سريع جداً. أما الـ processes فمحتاجة IPC بدعم الـ OS.`},
+ {q:"True or False: If one thread of a process crashes badly, the whole process may go down.",o:["True","False"],a:0,
+  e:`<b>True</b>. الـ threads بتشارك نفس الـ address space، فغلطة thread ممكن تبوّظ الذاكرة المشتركة وتوقّع الـ process كلها (تجربة ١).`},
+ {q:"Which one is NOT a benefit of multithreading?",o:["Each thread gets its own private copy of all the code and data","Responsiveness","Economy","Scalability"],a:0,
+  e:`الفوايد: Responsiveness, Resource sharing, Economy, Scalability. الـ threads بتشارك الكود والبيانات، مش بتاخد نسخ خاصة منهم.`},
+ {q:"A text editor keeps accepting your typing while it saves a big file in the background. Which benefit is this?",o:["Responsiveness","Economy","Scalability","Resource sharing"],a:0,
+  e:`البرنامج كمّل شغل رغم إن جزء منه مشغول = <b>Responsiveness</b>، وده مهم للـ user interfaces.`},
+ {q:"On a single-core system, how do four threads make progress?",o:["By taking turns, so only one runs at any instant (concurrency)","All four run at the same instant","They cannot run at all","They run only on the disk"],a:0,
+  e:`ده الـ <b>concurrency</b>: التبديل السريع بيخلّي الكل يتقدّم، لكن في كل لحظة thread واحدة بس بتتنفّذ (تجربة ٣).`},
+ {q:"What does parallelism mean?",o:["Tasks really run at the same instant on multiple cores","Tasks take turns on one core","Tasks never finish","Tasks wait for each other forever"],a:0,
+  e:`الـ <b>parallelism</b> = تنفيذ فعلي في نفس اللحظة على أكتر من core.`},
+ {q:"Core 0 adds the first half of two arrays and core 1 adds the second half. What kind of parallelism is this?",o:["Data parallelism","Task parallelism","No parallelism","Batch parallelism"],a:0,
+  e:`نفس العملية (الجمع) على أجزاء مختلفة من البيانات = <b>data parallelism</b>.`},
+ {q:"One thread sorts the data, another computes the average and a third draws a graph. What kind of parallelism is this?",o:["Task parallelism","Data parallelism","Memory parallelism","Disk parallelism"],a:0,
+  e:`عمليات مختلفة على نفس البيانات = <b>task parallelism</b>. وأغلب البرامج بتستخدم النوعين.`},
+ {q:"Who creates user threads?",o:["The programmer, using a threads library in the application code","The BIOS","The disk controller","The printer"],a:0,
+  e:`الـ user threads بيعملها المبرمج بـ threads library، أما الـ kernel threads فبيديرها الـ OS مباشرة.`},
+ {q:"In the many-to-one model, many user threads are mapped to:",o:["A single kernel thread","One kernel thread each","Four kernel threads exactly","No kernel thread"],a:0,
+  e:`<b>Many-to-One</b>: كل الـ user threads على kernel thread واحدة.`},
+ {q:"In the many-to-one model, one user thread blocks while waiting for I/O. What happens?",o:["All the threads block","Only that thread waits and the rest continue","The computer reboots","The kernel creates ten new threads"],a:0,
+  e:`لأن كلهم على kernel thread واحدة، لو اتحجزت الكل بيتحجز (تجربة ٥). ده عيب في الموديل ده.`},
+ {q:"What is the main advantage of the one-to-one model?",o:["Threads can run in parallel on multicore CPUs, and a blocked thread does not stop the others","It needs the fewest kernel threads","It is the easiest model to build inside the OS","It works only with one core"],a:0,
+  e:`كل user thread لها kernel thread: يعني true concurrency، ولو واحدة اتحجزت الباقي يكمّل.`},
+ {q:"What is the cost of the one-to-one model?",o:["Creating kernel threads uses more memory and CPU overhead","It cannot use multiple cores","One blocked thread blocks all","It needs a telephone line"],a:0,
+  e:`كل kernel thread بتاخد ذاكرة وCPU overhead، فعدد الـ threads الكبير جداً ممكن يبقى مكلف.`},
+ {q:"20 incoming calls are routed to 4 free customer service representatives as soon as any becomes free. Which model is this like?",o:["Many-to-many","Many-to-one","One-to-one","None of them"],a:0,
+  e:`المكالمات = user threads والممثلين = kernel threads، والتوزيع ديناميكي = <b>Many-to-Many</b>.`},
+ {q:"Which model do modern systems such as Windows and Linux use?",o:["One-to-one","Many-to-one","No threads at all","Batch model"],a:0,
+  e:`Windows و Linux بيستخدموا <b>one-to-one</b>. والـ many-to-one قليل الاستخدام حالياً.`},
+ {q:"Why can a many-to-one program not use several cores at once, even on an 8-core CPU?",o:["Only one thread can access the kernel at a time, because there is just one kernel thread","The cores are too slow","User threads cannot be created","The cache is too small"],a:0,h:1,
+  e:`فيه kernel thread واحدة بس، والـ kernel هو اللي بيجدول على الـ cores، فمفيش غير thread واحدة بتتنفّذ في اللحظة (مفيش true concurrency).`},
+ {q:"A program wants to create 10,000 user threads but not waste OS resources, and it also wants a blocked thread not to stop the others. Which model fits best?",o:["Many-to-many","Many-to-one","One-to-one","None, it is impossible"],a:0,h:1,
+  e:`الـ Many-to-Many بيوزّع threads كتير على عدد أصغر من kernel threads، فمفيش هدر موارد، وlو واحدة اتحجزت الباقي بيكمّل. (والتمن: تعقيد التنفيذ).`},
+ {q:"A CPU-heavy program is split into 4 threads and run on a single-core computer. Will it finish about 4 times faster?",o:["No, the threads only take turns, so there is no real parallel speed-up","Yes, always exactly 4 times faster","Yes, because threads are free","It will never finish"],a:0,h:1,
+  e:`على core واحد الـ threads بتتبدّل بس (concurrency)، فمفيش تنفيذ حقيقي متوازي. الفايدة هنا غالباً responsiveness مش سرعة، وفيه overhead بسيط للتبديل.`},
+ {q:"Two threads each add 1 to a shared counter 1000 times, but the final value is sometimes less than 2000. What is the most likely reason?",o:["A race condition on the shared variable because the threads were not coordinated","The stack is shared","The program counter is shared","The CPU is too hot"],a:0,h:1,
+  e:`الـ counter بيتشارك بين الـ threads، ولو الاتنين قرا وكتب في توقيت متداخل بيضيع تحديث. ده <b>race condition</b> ولازم تنسيق (synchronization).`},
+ {q:"Why does a crash in one thread threaten the whole process, while a crashed process rarely harms other processes?",o:["Threads share one address space, while processes have separate address spaces","Threads are bigger than processes","Processes have no memory","Threads run in kernel mode only"],a:0,h:1,
+  e:`الـ threads بتشارك نفس الذاكرة فخطأ فيها بيأثر على الكل. الـ processes كل واحدة في address space منفصل فالـ OS بيعزلها (تجربة ١).`}
+];
+const ES4=[
+ {q:"Q1. Define a thread. What do the threads of one process share and what does each thread own privately? Give examples of traditional and modern processes.",
+  a:`<p><b>Thread:</b> أصغر وحدة بيجدولها الـ CPU، ووحدة تنفيذ جوه process. الـ process الواحدة فيها thread أو أكتر.</p>
+  <ul><li><b>مشترك:</b> code, data (وheap) و open files.</li><li><b>خاص بكل thread:</b> Thread ID, program counter, registers, stack.</li></ul>
+  <p><b>Traditional process:</b> thread واحد (مثال: Calculator). <b>Modern process:</b> أكتر من thread (مثال: المتصفح بيحمّل صفحة ويشغّل فيديو ويستقبل ضغطات المستخدم في نفس الوقت).</p>
+  <div class="kw">كلمات مفتاحية: smallest unit of CPU scheduling – shared memory – PC/registers/stack – TID – single vs multiple threads</div>`},
+ {q:"Q2. Why do we use threads? Compare a process and a thread.",
+  a:`<p><b>المشكلة:</b> إنشاء process تقيل (نسخ page tables، ذاكرة منفصلة، bookkeeping). <b>الحل:</b> threads خفيفة بتشارك موارد الـ process، والتواصل بينها مباشر وسريع عبر الذاكرة المشتركة.</p>
+  <div class="tw"><table class="tbl"><tr><th>الجانب</th><th>Process</th><th>Thread</th></tr>
+  <tr><td>الذاكرة</td><td>address space منفصل</td><td>مشترك مع الـ process</td></tr>
+  <tr><td>موارده</td><td>code, data, heap, files</td><td>stack, registers, PC</td></tr>
+  <tr><td>الإنشاء</td><td>تقيل</td><td>خفيف</td></tr>
+  <tr><td>التواصل</td><td>IPC بدعم الـ OS</td><td>متغيرات مشتركة</td></tr>
+  <tr><td>لو ضرب</td><td>غالباً الباقي مبيتأثرش</td><td>الـ process كلها ممكن تقع</td></tr></table></div>
+  <div class="kw">كلمات مفتاحية: heavyweight vs lightweight – shared address space – IPC – crash impact</div>`},
+ {q:"Q3. Differentiate between concurrency and parallelism. Explain data and task parallelism and the challenges of multicore programming.",
+  a:`<ul><li><b>Concurrency:</b> على core واحد، threads بتتبدّل بسرعة فكلها بتتقدّم لكن واحدة بس في اللحظة.</li><li><b>Parallelism:</b> على multicore، أكتر من thread بتتنفّذ فعلاً في نفس اللحظة.</li></ul>
+  <p><b>Data parallelism:</b> نفس العملية على أجزاء من البيانات (جمع نصّين من array على core 0 وcore 1). <b>Task parallelism:</b> عمليات مختلفة (sort, average, draw graph). أغلب البرامج بتستخدم النوعين.</p>
+  <p><b>التحديات:</b> dividing work، balance، data splitting، data dependency، testing &amp; debugging (race conditions).</p>
+  <div class="kw">كلمات مفتاحية: interleaving – simultaneous – same operation / different operations – balance – dependency – race condition</div>`},
+ {q:"Q4. Explain the three multithreading models: many-to-one, one-to-one and many-to-many. Mention user vs kernel threads, pros, cons and an analogy for each.",
+  a:`<p><b>User threads:</b> بيعملها المبرمج بـ threads library. <b>Kernel threads:</b> بيديرها الـ OS. الهدف ربط الـ user threads بالـ kernel threads.</p>
+  <div class="tw"><table class="tbl"><tr><th>النموذج</th><th>الفكرة</th><th>الميزة</th><th>العيب</th><th>التشبيه</th></tr>
+  <tr><td>Many-to-One</td><td>كتير على kernel thread واحد</td><td>بسيط</td><td>blocking يوقف الكل، ومفيش true parallelism</td><td>خط تليفون واحد</td></tr>
+  <tr><td>One-to-One</td><td>كل user thread لها kernel thread</td><td>parallelism، والـ blocking محدود</td><td>overhead أعلى (ذاكرة وCPU)</td><td>كل موظف له كمبيوتر (Windows, Linux)</td></tr>
+  <tr><td>Many-to-Many</td><td>كتير على عدد أصغر أو مساوي من kernel threads</td><td>أحسن ما في الاتنين</td><td>معقد التنفيذ</td><td>٢٠ مكالمة على ٤ ممثلين</td></tr></table></div>
+  <div class="kw">كلمات مفتاحية: mapping – blocking – true concurrency – overhead – multiplexing</div>`},
+ {q:"Q5. List and explain the benefits of multithreading with an example for each.",
+  a:`<ul><li><b>Responsiveness:</b> الاستمرار في الشغل لو جزء اتحجز (واجهة المستخدم فضلت شغالة أثناء حفظ ملف).</li><li><b>Resource sharing:</b> الـ threads بتشارك موارد الـ process، وده أسهل من shared memory أو message passing.</li><li><b>Economy:</b> أرخص من إنشاء process، والتبديل بين threads overhead أقل من الـ context switching.</li><li><b>Scalability:</b> الـ process تستفيد من الـ multicore (برنامج بيشغّل threads على كل الـ cores).</li></ul>
+  <div class="kw">كلمات مفتاحية: responsiveness – resource sharing – economy – scalability – multicore</div>`}
+];
+
 /* ================= engine ================= */
-const QUIZ=[null,{Q:QS1,topic:'المقدمة والـ Interrupts'},{Q:QS2,topic:'أنواع الأنظمة والـ System Calls'},{Q:QS3,topic:'الـ Processes'}];
-const ESS=[null,ES1,ES2,ES3];
+const QUIZ=[null,{Q:QS1,topic:'المقدمة والـ Interrupts'},{Q:QS2,topic:'أنواع الأنظمة والـ System Calls'},{Q:QS3,topic:'الـ Processes'},{Q:QS4,topic:'الـ Threads'}];
+const ESS=[null,ES1,ES2,ES3,ES4];
 function shuf(n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function mountQuiz(root,Q,topic){
   const hasH=Q.some(x=>x.h);
@@ -1805,17 +2201,17 @@ function mountQuiz(root,Q,topic){
 }
 function mountEssays(root,E,last){
   root.innerHTML=`<section><h2>الأسئلة المقالية (${E.length})</h2><p>اكتب إجابتك بنفسك الأول (ولو على ورقة)، وبعدها اعرض الإجابة النموذجية وعلّم على النقاط اللي غطّيتها.</p><div class="el">${E.map((x,i)=>`<article class="q essay"><p class="eq">${x.q}</p><textarea placeholder="اكتب إجابتك هنا (اختياري)..." aria-label="your answer"></textarea><button class="btn" data-e="${i}">👀 اعرض الإجابة النموذجية</button><div class="model" hidden>${x.a}</div></article>`).join('')}</div></section>
-  <div class="row nextrow">${last?'<div class="final">🎉 خلّصت مراجعة المحاضرات التلاتة. بالتوفيق!</div>':'<button class="btn" data-next="1">المحاضرة اللي بعدها →</button>'}</div>`;
+  <div class="row nextrow">${last?'<div class="final">🎉 خلّصت مراجعة كل المحاضرات. بالتوفيق!</div>':'<button class="btn" data-next="1">المحاضرة اللي بعدها →</button>'}</div>`;
   root.addEventListener('click',e=>{const b=e.target.closest('button[data-e]');if(!b)return;const m=b.parentElement.querySelector('.model');m.hidden=!m.hidden;b.textContent=m.hidden?'👀 اعرض الإجابة النموذجية':'🙈 اخفي الإجابة'});
 }
-[1,2,3].forEach(n=>{
+[1,2,3,4].forEach(n=>{
   const L=document.getElementById('lec'+n);
   mountQuiz(L.querySelector('[data-t=quiz]'),QUIZ[n].Q,QUIZ[n].topic);
-  mountEssays(L.querySelector('[data-t=essay]'),ESS[n],n===3);
+  mountEssays(L.querySelector('[data-t=essay]'),ESS[n],n===4);
 });
 /* hero stats */
 (function(){
-  const mcq=QS1.length+QS2.length+QS3.length,es=ES1.length+ES2.length+ES3.length;
+  const mcq=QS1.length+QS2.length+QS3.length+QS4.length,es=ES1.length+ES2.length+ES3.length+ES4.length;
   function cnt(el,v){let k=0;const t=setInterval(()=>{k+=Math.max(1,Math.round(v/20));if(k>=v){k=v;clearInterval(t)}el.textContent=k},35)}
   cnt($('#st-mcq'),mcq);cnt($('#st-es'),es);
 })();
@@ -1838,7 +2234,7 @@ document.addEventListener('click',e=>{
   const g=e.target.closest('[data-go]');if(g){const [l,t]=g.dataset.go.split(':');go(+l,t);return}
   const n=e.target.closest('[data-next]');if(n){if(state.t==='quiz')go(state.l,'essay');else go(state.l+1,'explain')}
 });
-try{const p=(localStorage.getItem('os-review-pos')||'').split(':');if(p.length===2&&/^[123]$/.test(p[0])&&['explain','quiz','essay'].includes(p[1]))go(+p[0],p[1],true);else go(1,'explain',true)}catch(e){go(1,'explain',true)}
+try{const p=(localStorage.getItem('os-review-pos')||'').split(':');if(p.length===2&&/^[1-4]$/.test(p[0])&&['explain','quiz','essay'].includes(p[1]))go(+p[0],p[1],true);else go(1,'explain',true)}catch(e){go(1,'explain',true)}
 
 </script>
 </body>
